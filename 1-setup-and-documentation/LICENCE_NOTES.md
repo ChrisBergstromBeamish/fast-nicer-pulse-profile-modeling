@@ -1,8 +1,8 @@
 # Licence notes: the licences of the public sources read, and which of our files were written after reading which of theirs
 
 Facts only. This page says what the licences of the public sources are, as their own files state them, and which files of
-this repository were written after reading which files of theirs. It gives no advice. The choice of a licence for this
-repository is the author's (Chris Bergstrom's) and has not been made; no LICENSE file is in the repository.
+this repository were written after reading which files of theirs. It gives no advice. The author (Chris Bergstrom) has chosen the
+GNU General Public License, version 3, for this repository: the file `LICENSE` at its top.
 
 ## 1. X-PSI
 
@@ -37,7 +37,7 @@ steps to our curve; the timed working-out does not use it.
 GSL is not in the reference material on this machine: X-PSI's source tree only declares the GSL routines it calls, in
 `xpsi/include/GSL.pxd`, and the file `akima.c` is not in that tree. So GSL's licence file was not re-read for this page.
 GSL is distributed under the GNU General Public License, version 3 or later, as its source files state. That is stated here
-as a fact to be confirmed against GSL's own `COPYING` file by whoever decides the licence of this repository.
+from knowledge, and is still to be confirmed against GSL's own `COPYING` file.
 
 ## 3. The supplementary data of Bogdanov et al. 2019
 
@@ -116,5 +116,5 @@ calls) and the plain-text file `.git/packed-refs` (the source of the commit iden
   checks read are read at run time from the folders the user names in `settings.cfg`.
 - X-PSI is not imported, built or run by anything in this repository.
 - Nothing of the graphics-card code of Zhou and Huang is used.
-- The licence of this repository: the choice is the author's (Chris Bergstrom's) and has not been made. No LICENSE file is
-  in the repository.
+- The licence of this repository: the GNU General Public License, version 3, chosen by the author (Chris Bergstrom) on
+  23 November 2026; the file `LICENSE` at the repository's top holds its text.

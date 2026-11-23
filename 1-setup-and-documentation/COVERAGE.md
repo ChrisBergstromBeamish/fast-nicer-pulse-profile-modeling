@@ -406,7 +406,7 @@ not mean for them. The result of this project is a method of calculation.
 
 ## 6. The errors found so far
 
-The list below is the project's own record of its errors, kept whole; 'I' in it is the record's author.
+The list below is the project's own list of its errors, kept whole and in the words of the one who made them: 'I' is Claude, the AI system that wrote the programs under the author's direction. Codex is a second AI system, which reviewed them.
 
 1. Plan v0.1 said the public code makes "13 million look-ups in the hot-gas table" and would gain from the ring symmetry.
    Wrong: it already uses the ring symmetry, and the 13 million are shifted interpolations. Corrected in plan v0.2.

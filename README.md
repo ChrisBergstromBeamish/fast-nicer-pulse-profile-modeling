@@ -7,10 +7,6 @@ speed sets the cost of the whole inference. The calculation is written in Python
 and checked, and written out again in C for speed; both are compared, bin by bin and in the likelihood, with X-PSI, the
 public code for this problem, on X-PSI's own shipped example. The only data used so far is that synthetic example.
 
-Suggested GitHub description: Fast pulse profile modeling for NICER: the X-ray pulse profile of a hot spot on a spinning neutron star and its likelihood, in Python and in C, checked bin by bin and against X-PSI's shipped example.
-
-Suggested GitHub topics: nicer, pulse-profile-modeling, neutron-star, x-ray-astronomy, hot-spot, likelihood, bayesian-inference, x-psi, light-bending, python, c, numpy
-
 NASA, the NICER team and the authors of the public codes have not asked for, reviewed or endorsed this work. NICER is named
 here only as the instrument whose kind of data this calculation serves.
 
@@ -33,8 +29,8 @@ One processor core of a laptop (Intel Core Ultra 7 258V); every number below has
 - The likelihood of the public code X-PSI's shipped quick example: -32552.710 against its shipped -32552.617, where its
   own check accepts a difference of 0.3255.
 - One working-out of that likelihood: 3.2 thousandths of a second in Python, 0.4 thousandths of a second compiled, as
-  measured on 22 November 2026. A repeat on 23 November on the same machine gave 5.1 and 1.0 thousandths of a second with
-  the same numbers out; both are in the claims table.
+  measured on 22 November 2026. A repeat on 23 November with the laptop on battery power gave 5.1 and 1.0 thousandths of
+  a second with the same numbers out; on mains power again that day, 2.9 and 0.40. All are in the claims table.
 - The public code's time on the same laptop: not measured. So no speed ratio against it is stated anywhere here.
 - The public code's second shipped check (a different star): ours gives +6.5 against a tolerance of 0.479, so ours fails
   that check; which of the two numbers is nearer the exact value of the model is not known (`COVERAGE.md`).
@@ -42,6 +38,10 @@ One processor core of a laptop (Intel Core Ultra 7 258V); every number below has
 Agreement with the public code is not a result about the physics, and never a proof of it: `DERIVATION.md` says from which
 starting points the programs compute light's path, and why this project cannot tell those starting points apart from the
 public code's. The result of this project is a method of calculation.
+
+## Licence
+
+GNU General Public License, version 3: the file `LICENSE`. `1-setup-and-documentation/LICENCE_NOTES.md` says which public sources were read and under which licences they stand.
 
 ## What is not in this repository
 

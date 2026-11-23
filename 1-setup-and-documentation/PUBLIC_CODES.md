@@ -29,8 +29,8 @@ Used, as targets and as inputs of the comparison:
 - its likelihood definition, written anew by us from its source (`2-python-solution/code/public_likelihood.py`): the
   number to be reproduced, not physics of ours.
 
-Not used: its code. X-PSI was not installed, not built and not run on this machine: the machine's safety check refused the
-install twice, and the decision to install is the author's. Nothing of it is imported by anything here, and no file of it
+Not used: its code. X-PSI has not been installed, built or run on this machine; the decision to install it is the
+author's. Nothing of it is imported by anything here, and no file of it
 is copied here (`LICENCE_NOTES.md`). What the agreement with its shipped values does and does not show is in
 `COVERAGE.md`, section 5.
 
@@ -65,8 +65,8 @@ shape, atmosphere beaming (NSX tables), and instrument response folding. Include
 validation and comparison." Its paper is arXiv:2510.07764. Its licence file names Tianzhe Zhou and Chun Huang
 (`LICENCE_NOTES.md`, section 4).
 
-Its figures, as the project's management noted them from the paper (arXiv:2510.07764; the paper itself is not in the
-reference material on this machine, so they were not re-read for this page): 1.8 to 5.3 thousandths of a second per profile
+Its figures, read from the legends of the paper's figures (arXiv:2510.07764, version 1; its abstract says 2 to 5
+thousandths of a second): 1.8 to 5.3 thousandths of a second per profile
 at its standard setting and 6.9 to 14.2 thousandths of a second at its high setting, on one RTX 4080 graphics card; with a
 hot-gas (atmosphere) spectrum, interstellar absorption and the instrument response, and without the likelihood.
 
@@ -81,7 +81,7 @@ The comparison with ours is not like for like, for these reasons:
   response;
 - the two were not run on the same machine, nor on the same problem.
 
-Its source is in the reference material on this machine, but it was not run, and it is not needed in this sprint; only its
+Its source is in the reference material on this machine, but it was not run, and it is not needed here; only its
 `README.md` and `LICENSE` were read.
 
 ## 3. Our own numbers on this page
@@ -89,8 +89,9 @@ Its source is in the reference material on this machine, but it was not run, and
 One whole working-out of the public quick example's likelihood (the star's bin counts, the energy integrals, the
 likelihood) at 10 rings per panel, 16 points and 24 energies, on one core of an Intel Core Ultra 7 258V, one process, one
 thread, fastest of repeated runs, on 22 November 2026: 3.2 thousandths of a second in Python with NumPy, and 0.4 thousandths
-of a second in the compiled copy. A repeat on 23 November on the same machine gave 5.1 and 1.0 thousandths of a second. Each
-has its row in `CLAIMS.md` (F1, F2) with the command that measured it and both dates. Our likelihood values, and what they
+of a second in the compiled copy. A repeat on 23 November with the laptop on battery power gave 5.1 and 1.0 thousandths of a
+second, and on mains power again that day 2.9 and 0.40. Each
+has its row in `CLAIMS.md` (F1, F2, F8) with the command that measured it and its date. Our likelihood values, and what they
 do and do not show, are in `COVERAGE.md`, sections 3.1 and 5.
 
 ## 4. What is not stated here
