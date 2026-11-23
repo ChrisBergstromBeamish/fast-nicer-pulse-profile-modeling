@@ -1,0 +1,2 @@
+# every text file keeps Unix line ends on every machine (the shell scripts run on Linux)
+* text=auto eol=lf
