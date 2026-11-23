@@ -84,7 +84,7 @@ It compares both forms with the Python solution (the quick example, six stars at
 made-up channels: sixteen checks), then checks the batch mode against the program itself: each form, and the form without
 OpenMP, gives every star in a batch exactly the bits it gets alone, on 1 to 8 threads; the library gives the batch mode's
 lines; and `make race` (which it runs) finds no race. It ends with a line that begins `24 checks: 24 hold, 0 fail`, in
-about a minute. The exit code is 0 when every check holds, and 2 if a program is not built.
+one to three minutes (`CLAIMS.md`, row F7). The exit code is 0 when every check holds, and 2 if a program is not built.
 
 **Windows notes.** Open the Linux side with `wsl.exe -d <distribution>`; a Windows folder `C:\a\b` is `/mnt/c/a/b` there.
 The Python check commands run on the Windows side and call the compiled program through `wsl.exe` themselves. If `make`

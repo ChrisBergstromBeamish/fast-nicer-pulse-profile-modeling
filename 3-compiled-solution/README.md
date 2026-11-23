@@ -20,7 +20,7 @@ reference; this folder's program is checked against it bin by bin (`check.py`). 
 
 Both forms are native programs for the processor they are built on: `-march=native` lets the compiler use every instruction
 of that processor, so a built program runs on that machine and on others with the same instruction extensions, and is
-rebuilt (one `make`) for any other. Found with `make depends`, which runs `file` and `ldd` on the two programs, on the
+rebuilt (one `make`) for any other. Found with `make depends`, which runs `file` and `ldd` on the four built forms, on the
 machine the work was done on (Ubuntu 24.04 under WSL, gcc 13.3, a 64-bit Intel processor):
 
 - `file`: each form is an "ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter
@@ -88,7 +88,7 @@ function, in the same order, as alone.
 
 The stars file holds one star per line, the eight numbers in the order above, separated by spaces (blank lines are skipped).
 Numbers after the eighth on a line are not read. The batch mode uses the example's limits on the background
-(`NICER_NO_UPPER_LIMIT` is read only by the single-star mode). For each star, in the file's order, one line is written: ln L to 17 significant digits (which gives back every bit when read
+(`NICER_NO_UPPER_LIMIT` is read only by the single-star mode). For each star, in the file's order, one line is written: ln L with up to 17 significant digits (C's `%.17g`, which leaves out trailing zeros, so a line may show 16 or fewer; read as a double it gives back every bit
 as a double), or `-inf` for the public code's early exit and for a refused star, then the code (0, or the refusal's code as
 above; `-9` if a thread could not have its working memory). A refused star does not disturb its neighbours. With a dump
 file, each star's bin counts and model rates are written to it, one star after another (zeros for a refused star). The time
@@ -96,7 +96,9 @@ the batch took, and stars per second, go to the error output (the stars only, no
 of the tables). For example, with 256 stars drawn from the public example's prior:
 
     python3 -I -B draw_stars.py 1 256 stars_example.txt
-    ./nicer_fast tables.bin batch 10 16 24 8 stars_example.txt > lnL_example.txt
+    ./nicer_fast tables.bin batch 10 16 24 8 stars_example.txt > batch_example.txt
+
+(`make clean` removes both files; `.gitignore` lists `stars_*.txt` and `batch_*.txt`.)
 
 The stars are handed to the threads one at a time as threads become free (OpenMP's `schedule(dynamic, 1)`), since stars
 differ in how long they take. `nicer_fast_strict` has the same batch mode; `nicer_fast_no_openmp` runs it on one thread and
