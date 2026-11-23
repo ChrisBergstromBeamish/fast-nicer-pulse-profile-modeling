@@ -6,7 +6,7 @@ PREMISES (no formula here is taken from general relativity; see NICER_SPEED_PLAN
   P2  rulers: radial dl = dr / f(r); sideways r dpsi (r is the circumference over 2 pi)        [second paper, Section 3]
   P3  light moves at c in every frame at rest                                                  [second paper, H2]
   P4  along the path b = r sin(alpha) / f(r) stays constant, alpha being the angle between the ray and the
-      outward radius as the frame at rest there reads it      [the angular momentum law: NOT in the papers; named premise]
+      outward radius as the frame at rest there reads it      [the angular momentum law: not derived in the papers; a named premise, accepted by the author 23 Nov 2026]
 CONSEQUENCES (two lines each):
   in the frame at rest, in its time dt_loc: radial step dr/f = c cos(alpha) dt_loc, sideways step r dpsi = c sin(alpha) dt_loc,
   and dt_loc = f dt, so   dpsi/dr = b / (r^2 sqrt(Q)),   c dt/dr = 1 / (f^2 sqrt(Q)),   Q = 1 - b^2 f^2 / r^2 = cos^2(alpha).

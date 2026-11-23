@@ -6,7 +6,7 @@
 #
 # Light's path used here comes from clocks and rulers only (units: the length L = 2GM/c^2 is 1): clock rate f(r)^2 = 1 - 1/r,
 # radial ruler dl = dr/f, light at speed c in every frame at rest, and the constant b = r sin(alpha)/f(r) along the path
-# (the angular momentum law, to be confirmed by Chris). That gives d(psi)/dr = b / (r^2 sqrt(1 - b^2 f^2 / r^2)).
+# (the angular momentum law, accepted by the author as a premise on 23 Nov 2026). That gives d(psi)/dr = b / (r^2 sqrt(1 - b^2 f^2 / r^2)).
 # Slow rotation and an isotropic surface are taken, so only the light path is tested.
 import math
 import numpy as np

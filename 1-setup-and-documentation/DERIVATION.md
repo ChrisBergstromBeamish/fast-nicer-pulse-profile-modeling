@@ -16,7 +16,7 @@ Labels (the project's rule): DERIVED means derived in the author's second paper 
 
 **P3, light's speed.** Plain: in every frame at rest, light moves at c. Exact: the paper's H2, special relativity holds in each frame at rest; light moves at c in each such frame. Label: DERIVED there. Where this page uses more of special relativity than the speed of light (the Doppler factor, aberration, time dilation, length contraction), it uses the Lorentz transformation in the frame at rest at the emission point, as a consequence of H2, with its steps shown (section 3.2), and nothing else.
 
-**P4, the constant of the path.** Plain: along a ray, the radius times the sine of the angle to the radius, divided by the clock rate, does not change. Exact: `b = r sin(alpha) / f(r)` has the same value at every point of a ray. Label: IMPORT. This law (the angular momentum law for light) is not in the author's two papers, and the author has not yet said yes to it. Every step on this page that uses it says so.
+**P4, the constant of the path.** Plain: along a ray, the radius times the sine of the angle to the radius, divided by the clock rate, does not change. Exact: `b = r sin(alpha) / f(r)` has the same value at every point of a ray. Label: IMPORT, accepted by the author as a premise on 23 November 2026. This law (the angular momentum law for light) is not derived in the author's two papers. Every step on this page that uses it says so.
 
 **Arrival.** Plain: a photon that leaves the surface in an open direction reaches the far observer; nothing in between absorbs it. Label: IMPORT. "Open" means above the surface's tangent plane (`mu > 0` in section 3.2), along the one path of light the program finds (section 3.4 says what the program refuses).
 
