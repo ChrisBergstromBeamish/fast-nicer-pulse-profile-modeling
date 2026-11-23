@@ -56,7 +56,8 @@ around it. The program adds one path only and refuses such a star instead of ret
   `kernel_against_plain_star.py`):
   - the sixteen agreed reference curves, directly: twelve extended spots within 1.2e-5 to 2.8e-4 of the curve's median
     (the article's target is 1e-3); four point-like spots within 2.4e-3 to 7.7e-3 at the edges of eclipses, which is above
-    that target there (the article reports the same of its own codes);
+    that target there (the project's record states that the article reports the same of its own codes; the article itself
+    is not in the reference material on this machine, so that statement was not re-read for this page);
   - round stars, 36 geometries (observers from 0° to 180°, also exactly on the axis; spots in both halves and over the
     poles): 34 within 2e-4 of the largest bin (most near 1e-5); two at 2.4e-4 and 3.2e-4, where only a sliver of the spot
     is in view, and there the difference shrinks as the plain way's patches are made smaller (to 1.1e-4 and 2.1e-4 at
@@ -199,7 +200,7 @@ converged value):
 | ours, 24 rings per panel, 24 points, 32 energies | −32552.709070 | −0.0922 |
 | ours, 12 rings per panel, 16 points, 24 energies | −32552.711306 | −0.0944 |
 | ours, 10 rings per panel, 16 points, 24 energies (the working setting) | −32552.719298 | −0.1024 |
-| ours, 8 rings per panel, 12 points, 16 energies | −32552.774589 | −0.1577 |
+| ours, 8 rings per panel, 12 points, 16 energies | −32552.774590 | −0.1577 |
 | ours, 6 rings per panel, 12 points, 16 energies | −32553.007080 | −0.3902 (outside the tolerance) |
 | our second program, the plain way, 48 × 192 patches | −32552.7071 | −0.0902 |
 | our second program, the plain way, 96 × 384 patches | −32552.7095 | −0.0926 |
@@ -228,7 +229,7 @@ the committed check gives 1.3e-5.)
   tables and the approximation are built). The docstring of `spot_counts`, measured on the quick example and on the second
   check star: "32 points change ln L by 7e-12 and 1e-6 against 96 points; 3 steps by 7e-12 and 2e-6 against 8 steps" (the
   steps are the secant steps for each ring's end directions, `n_sec = 3`, whose residuals are then checked to `END_TOL`).
-  These two measurements are the program's own record; no committed command reproduces them.
+  These two measurements stand in the docstring only; no committed command reproduces them.
 - The approximation of the path integrals (`_path_fit`): one two-variable Chebyshev series (32 by 72 terms) in u = L/R
   and z = sqrt(1 − x) for the swept angle over z and the delay over z², built once from `bend` with 96 points, and used
   for every star inside `FIT_U` with every ring's tilt below `FIT_TILT`. Measured against `bend` with 96 points on 6000
@@ -372,7 +373,7 @@ made the file, its background convention and a controlled comparison.
 | ours, 10 rings per panel, 16 points, 24 energies | −47874.7612 | +6.517 |
 | our second program, the plain way, 48 × 192 patches | −47875.0144 | +6.264 |
 | our second program, the plain way, 96 × 384 patches | −47874.8493 | +6.429 |
-| X-PSI's two interpolation steps (with its 128 energies) applied to our curve | −47870.96 (±0.2) | +10.3 |
+| X-PSI's two interpolation steps (with its 128 energies) applied to our curve (`second_check_point_emulated.py`; the record gave −47870.96 ±0.2) | −47870.95 | +10.32 |
 
 **Ours fails this check: +6.5 against a tolerance of 0.479.** Measured facts about this point: the star does not match the
 data (the model alone gives 666,370 counts against 578,528, and exceeds the data in 238 of 291 channels), and a change of
@@ -386,8 +387,9 @@ smaller (−0.25, then −0.09).
 
 One arithmetic observation (an observation, not a finding): if the public code's counts at its quick settings were higher
 than ours by 6.9 parts in 100,000 in every bin, that alone would give +6.51 at this star and −0.033 at the quick example's
-star (worked out with the likelihood itself). The measured gaps are +6.52 and −0.093. So one small excess of one sign fits
-the whole gap here and a third of the gap there. The shipped expected-counts file, made at finer settings, is higher than
+star (worked out with the likelihood itself; the two follow by proportion from the sensitivities of −9.44 and +0.047 per
+part in 10,000 stated above). The measured gaps are +6.52 and −0.093. So one small excess of one sign matches the whole gap
+here and a third of the gap there. The shipped expected-counts file, made at finer settings, is higher than
 ours by 1.5 parts in 100,000 in total. This is what one would see if the public code's counts come down toward ours as its
 settings are refined, and it is also what one would see by coincidence. The run at finer settings decides.
 

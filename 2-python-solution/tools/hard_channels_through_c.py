@@ -1,7 +1,7 @@
 """The 247 hard made-up channels of fast_likelihood_stress.py (few counts, source far above or below the data, wide, narrow
 and displaced limits, Codex's one-count counterexample) through the compiled copy's likelihood, channel by channel, against
-the step-by-step Python form. The channels are written to 3-compiled-solution/hard_channels.bin, the compiled program writes
-its answers next to it, and both files are removed.
+the step-by-step Python form. The channels are written to a file in 3-compiled-solution, the compiled program writes its
+answers next to it, and both files are removed.
 usage: python -I -B -X utf8 hard_channels_through_c.py [nicer_fast | nicer_fast_strict]     (nicer_fast if no name is given)
 The last line, RESULT ..., is read by 3-compiled-solution/check.py."""
 import math, os, struct, sys
@@ -34,12 +34,13 @@ D, Sr, Sup = D[keep], Sr[keep], Sup[keep]
 labels = [l for l, k in zip(labels, keep) if k]
 fact = pl.log_factorial_sums(D)
 cdir = settings.compiled_dir()
-path = os.path.join(cdir, "hard_channels.bin")
+name = "hard_channels_%d.bin" % os.getpid()                  # the process number keeps two runs apart
+path = os.path.join(cdir, name)
 with open(path, "wb") as fh:
     fh.write(struct.pack("<iid", D.shape[0], n, T))
     for a in (D, Sr, Sup, fact):
         fh.write(np.ascontiguousarray(a, dtype=np.float64).tobytes())
-out = settings.run_compiled(program, ["tables.bin", "channels", "hard_channels.bin"])
+out = settings.run_compiled(program, ["tables.bin", "channels", name])
 print("the compiled copy said:", out.strip() or "(nothing: is it built?)")
 if not os.path.isfile(path + ".out"):
     os.remove(path)
@@ -51,10 +52,12 @@ det = {}
 pl.marginal_loglike_fast(D, Sr, T, Sup, fact, details=det)
 diff = cvals - ref
 bad = np.where(~(np.abs(diff) < 1e-8))[0]
-largest, largest_fast = np.nanmax(np.abs(diff)), np.nanmax(np.abs(cvals - det["per_channel"]))
+largest, largest_fast = float(np.max(np.abs(diff))), float(np.max(np.abs(cvals - det["per_channel"])))
+if cvals.size != D.shape[0] or not (math.isfinite(largest) and math.isfinite(largest_fast)):
+    largest = largest_fast = math.inf                       # a missing or not-a-number answer counts as the largest possible difference
 print("%d hard channels: compiled minus the step-by-step Python form: largest %.2e ; channels above 1e-8: %d ; compiled minus the fast Python form: largest %.2e"
       % (D.shape[0], largest, bad.size, largest_fast))
 for r in bad[:12]:
     print("   %-52s counts %5.0f: compiled %.10f, reference %.10f, difference %+.2e" % (labels[r], D[r].sum(), cvals[r], ref[r], diff[r]))
 os.remove(path); os.remove(path + ".out")
-print("RESULT channels=%d largest=%.3e above=%d largest_vs_fast=%.3e" % (D.shape[0], largest if cvals.size == D.shape[0] else math.inf, bad.size, largest_fast))
+print("RESULT channels=%d largest=%.3e above=%d largest_vs_fast=%.3e" % (D.shape[0], largest, bad.size, largest_fast))

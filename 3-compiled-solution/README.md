@@ -28,8 +28,9 @@ machine the work was done on (Ubuntu 24.04 under WSL, gcc 13.3, a 64-bit Intel p
 - `ldd nicer_fast_strict` (strict arithmetic): the same without `libmvec.so.1`.
 
 So at run time each form needs: a 64-bit Linux with the GNU C library (which provides all of the above; glibc 2.39 was
-used), the table file `tables.bin` next to it, and nothing else: no Python, no other library. Python with NumPy is needed
-once, when `make` writes `tables.bin`.
+used, as `ldd --version` prints it; the compiler was gcc 13.3.0, as `gcc --version` prints it), the table file `tables.bin`
+next to it, and nothing else: no Python, no other library. Python with NumPy is needed once, when `make` writes
+`tables.bin`.
 
 The two forms, built by `make` from the same source:
 

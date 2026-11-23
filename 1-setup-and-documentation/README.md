@@ -18,7 +18,7 @@ The checks read two public data sets. Neither is copied into this repository (th
 noted in `LICENCE_NOTES.md`).
 
 1. **The data files of X-PSI's quick example.** X-PSI is the public code this work is compared with. Its source is at
-   `https://github.com/xpsi-group/xpsi` (the address printed in its `pyproject.toml` and `README.rst`). The checks were
+   `https://github.com/xpsi-group/xpsi` (the address its `pyproject.toml` prints as its home page). The checks were
    written against the source tree at commit `bb5f461e605b22c6251b155b27a914a558757f93`, and only read its folder
    `examples/examples_fast/Data` (four text files, of which three are read: the example's counts, its background, its
    expected counts). Get that
@@ -27,8 +27,9 @@ noted in `LICENCE_NOTES.md`).
 2. **The agreed reference curves and tables of Bogdanov et al. 2019**, "Constraining the Neutron Star Mass-Radius Relation
    and Dense Matter Equation of State with NICER. II. Emission from Hot Spots on a Rapidly Rotating Neutron Star",
    Astrophysical Journal Letters 887, L26 (article identifier ab5968; DOI 10.3847/2041-8213/ab5968). The journal distributes
-   the article's supplementary data as the file set `apjlab5968`: 24 text files, described in its `ReadMe`. Put the folder
-   that holds those 24 files anywhere.
+   the article's supplementary data as the file set `apjlab5968`, an archive (its `ReadMe` calls it "the tar.gz file") of
+   24 text files and the `ReadMe`. Unpack it; the 24 files (`SD1a_test_IM.txt` to `OS1l_test_GSFCS.txt` and the two `_CU`
+   tables) must lie directly in one folder, and that folder may be anywhere.
 
 ## 3. Tell the programs where the reference material is
 
@@ -48,10 +49,10 @@ From the repository's top:
 
     python -I -B -X utf8 2-python-solution/check.py
 
-It runs the ten quick checks and ends with the line `10 quick checks: 10 hold, 0 fail`, in about ten seconds on one
-processor core of a laptop. Each line names what is compared, the difference found and the limit. The exit code is 0 when
+It runs the ten quick checks and ends with a line that begins `10 quick checks: 10 hold, 0 fail` (the seconds it took
+follow), in about ten seconds on one processor core of a laptop. Each line names what is compared, the difference found and the limit. The exit code is 0 when
 every check holds. With `--slow` it also runs the slow checks (about ten minutes; `CLAIMS.md` lists them with their
-times), and the last line then adds `; 20 slow checks: 20 hold, 0 fail`. Two slower comparisons are not in it and have their
+times), and the last line then adds `; 26 slow checks: 26 hold, 0 fail`. Two slower comparisons are not in it and have their
 own commands (`CLAIMS.md`). (The flags `-I -B -X utf8` make Python ignore any installed
 packages and environment, write no cache files, and use UTF-8; every Python command in this repository is run that way.)
 
@@ -73,8 +74,8 @@ Then, from the repository's top, on the side that has Python with NumPy:
     python -I -B -X utf8 3-compiled-solution/check.py
 
 It compares both forms with the Python solution (the quick example, six stars at three settings, sixty random stars, 247 hard
-made-up channels) and ends with `14 checks: 14 hold, 0 fail`, in under a minute. The exit code is 0 when every check holds,
-and 2 if a program is not built.
+made-up channels) and ends with a line that begins `16 checks: 16 hold, 0 fail`, in under a minute. The exit code is 0 when
+every check holds, and 2 if a program is not built.
 
 **Windows notes.** Open the Linux side with `wsl.exe -d <distribution>`; a Windows folder `C:\a\b` is `/mnt/c/a/b` there.
 The Python check commands run on the Windows side and call the compiled program through `wsl.exe` themselves. If `make`

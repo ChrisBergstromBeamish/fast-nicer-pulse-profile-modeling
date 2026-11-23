@@ -22,7 +22,7 @@ stars = [(1.4, 12.0, 1.0, math.cos(math.radians(60.0)), 0.0, math.radians(70.0),
          (1.55, 10.4, 0.9, 0.1, -0.2, 1.5, 0.3, 6.72),
          (1.1, 11.0, 1.0, 0.999999, 0.3, 0.9, 0.6, 6.7),
          (1.3, 12.5, 1.0, 0.3, 0.6, 0.2, 0.9, 6.68)]
-worstS, worstR, worstL, worstLrel, n_missing = 0.0, 0.0, 0.0, 0.0, 0
+worstS, worstR, worstL, worstLrel, n_missing, n_mismatch = 0.0, 0.0, 0.0, 0.0, 0, 0
 for (npp, n, nE) in ((10, 16, 24), (8, 12, 16), (24, 24, 32)):
     E, W = qe.cheb_energy_matrix(edges_E[0], edges_E[-1], nE, edges_E)
     for k, p in enumerate(stars):
@@ -32,7 +32,7 @@ for (npp, n, nE) in ((10, 16, 24), (8, 12, 16), (24, 24, 32)):
                            qe.X_KB_OVER_KEV * 10.0**logT, E, ph, phase0=0.5 - shift, n_rings=npp, n=n) * (qe.X_BB / BB_CONST)
         star = (qe.AREA * qe.NB) * (W @ S.T)
         v = pl.marginal_loglike_fast(counts, star, qe.T_EXP, support, fact)
-        dump = "dump_%d_%d_%d_%d.bin" % (npp, n, nE, k)
+        dump = "dump_%d_%d_%d_%d_%d.bin" % (npp, n, nE, k, os.getpid())        # the process number keeps two runs apart
         out = settings.run_compiled(program, ["tables.bin", npp, n, nE, 0] + [repr(float(x)) for x in p] + [dump])
         line = [l for l in out.splitlines() if l.startswith("ln L")]
         if not line:
@@ -46,13 +46,19 @@ for (npp, n, nE) in ((10, 16, 24), (8, 12, 16), (24, 24, 32)):
         starc = raw[qe.NB * nE:].reshape(291, qe.NB)
         eS = np.max(np.abs(Sc - S)) / S.mean()
         eR = np.max(np.abs(starc - star)) / star.mean()
-        dL = vc - v if np.isfinite(v) else (0.0 if not np.isfinite(vc) else float("nan"))
-        rel = abs(dL) / max(1.0, abs(v)) if np.isfinite(v) else abs(dL)
+        if np.isfinite(v) and np.isfinite(vc):
+            dL = vc - v
+            rel = abs(dL) / max(1.0, abs(v))
+        elif np.isfinite(v) or np.isfinite(vc):                # the public code's early exit in one program only
+            n_mismatch += 1
+            dL = rel = math.inf
+        else:
+            dL = rel = 0.0                                     # both left by the early exit
         worstS, worstR, worstL, worstLrel = max(worstS, eS), max(worstR, eR), max(worstL, abs(dL)), max(worstLrel, rel)
         print("star %d at (%d rings per panel, %d points, %d energies): bin counts differ by %.1e of the mean bin, model rates by %.1e ; ln L compiled %.9f, Python %.9f, difference %+.1e"
               % (k, npp, n, nE, eS, eR, vc, v, dL), flush=True)
         os.remove(os.path.join(cdir, dump))
-print("largest differences over all: bin counts %.1e of the mean bin ; model rates %.1e ; ln L %.1e, relative %.1e ; stars without an answer from the compiled program: %d"
-      % (worstS, worstR, worstL, worstLrel, n_missing))
-print("RESULT largest_bins=%.3e largest_rates=%.3e largest_lnL=%.3e largest_lnL_rel=%.3e missing=%d"
-      % (worstS, worstR, worstL if n_missing == 0 else math.inf, worstLrel if n_missing == 0 else math.inf, n_missing))
+print("largest differences over all: bin counts %.1e of the mean bin ; model rates %.1e ; ln L %.1e, relative %.1e ; stars without an answer from the compiled program: %d ; early exit in one program only: %d"
+      % (worstS, worstR, worstL, worstLrel, n_missing, n_mismatch))
+print("RESULT largest_bins=%.3e largest_rates=%.3e largest_lnL=%.3e largest_lnL_rel=%.3e missing=%d mismatch=%d"
+      % (worstS, worstR, worstL if n_missing == 0 else math.inf, worstLrel if n_missing == 0 else math.inf, n_missing, n_mismatch))

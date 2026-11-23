@@ -16,7 +16,7 @@ support = np.stack([np.zeros(291), -np.ones(291)], axis=1)
 edges_E = pl.example_instrument_edges()
 P2 = dict(qe.P, radius=10.0, log10T=6.8)
 EXP2 = -47881.27817666349
-RECORDED = 6.518
+FOUND_BEFORE = 6.518
 vals = {}
 for nr, n, nE in ((48, 32, 48), (24, 24, 32), (10, 16, 24)):
     v = qe.ours(P2, counts, support, edges_E, n_rings=nr, n=n, nE=nE)
@@ -37,5 +37,5 @@ w0 = pl.marginal_loglike(c0, st0, qe.T_EXP, s0)
 w1 = pl.marginal_loglike(c0, st0 * (1.0 + 1e-4), qe.T_EXP, s0)
 print("for comparison, at the quick example's star the same change gives %+.4f" % (w1 - w0))
 conv = vals[(48, 32, 48)] - EXP2
-print("RESULT converged_minus_shipped=%.6f converged_minus_shipped_vs_recorded=%.3e working_minus_shipped=%.6f sensitivity_second=%.3f sensitivity_quick=%.4f"
-      % (conv, abs(conv - RECORDED), vals[(10, 16, 24)] - EXP2, v1 - v0, w1 - w0))
+print("RESULT converged_minus_shipped=%.6f converged_minus_shipped_vs_found_before=%.3e working_minus_shipped=%.6f sensitivity_second=%.3f sensitivity_quick=%.4f"
+      % (conv, abs(conv - FOUND_BEFORE), vals[(10, 16, 24)] - EXP2, v1 - v0, w1 - w0))

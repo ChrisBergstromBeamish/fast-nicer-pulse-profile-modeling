@@ -1,6 +1,6 @@
 """The fast kernel against the plain way for flattened stars (plain_star.py), bin by bin and energy by energy, on the public
-quick example's star and on its second check star (an independent route in emission phase with the lensing factor written
-out). Also the plain way itself against three of the agreed reference curves. The plain way's flux is sampled at 8 phases
+quick example's star and on its second check star (Codex's round-3 test 1: an independent route in emission phase with the
+lensing factor written out). Also the plain way itself against three of the agreed reference curves. The plain way's flux is sampled at 8 phases
 inside each bin here, so the bin comparison is at the level of that sampling (a few parts in 100,000); the comparison with
 64 samples per bin is in likelihood_from_plain_star.py.
 usage: python -I -B -X utf8 kernel_against_plain_star.py        (about six minutes; the apjlab5968 folder from settings.cfg)

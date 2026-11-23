@@ -31,6 +31,6 @@ depends: nicer_fast nicer_fast_strict
 	ldd nicer_fast_strict
 
 clean:
-	rm -f nicer_fast nicer_fast_strict tables.bin hard_channels.bin hard_channels.bin.out dump_*.bin
+	rm -f nicer_fast nicer_fast_strict tables.bin hard_channels*.bin hard_channels*.bin.out dump_*.bin
 
 .PHONY: all depends clean

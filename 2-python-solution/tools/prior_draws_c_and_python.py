@@ -36,7 +36,7 @@ for k in range(ndraw):
         n_py_stop += 1
         print("draw %d: the Python program stopped: %s: %s ; star %s" % (k, type(ex).__name__, str(ex)[:80], np.round(p, 4).tolist()))
         continue
-    dump = "dump_prior_%d.bin" % k
+    dump = "dump_prior_%d_%d.bin" % (k, os.getpid())        # the process number keeps two runs apart
     out = settings.run_compiled(program, ["tables.bin", npp, n, nE, 0] + [repr(float(x)) for x in p] + [dump])
     line = [l for l in out.splitlines() if l.startswith("ln L")]
     if not line:

@@ -143,7 +143,7 @@ SLOW = (
     ("fast_likelihood_stress.py", [], (
         ("largest", "the fast likelihood form against the step-by-step form on 247 hard made-up channels, per channel", 1e-8),)),
     ("second_check_point.py", [], (
-        ("converged_minus_shipped_vs_recorded", "the public code's second check: ours converged minus its shipped value, against the +6.518 found before (ours FAILS that check)", 5e-3),)),
+        ("converged_minus_shipped_vs_found_before", "the public code's second check: ours converged minus its shipped value, against the +6.518 found before (ours FAILS that check)", 5e-3),)),
     ("kernel_against_plain_way.py", [], (
         ("flagged", "round stars, 36 geometries against the plain way: geometries above 2e-4 of the largest bin (two known, with a sliver of the spot in view)", 2),
         ("largest", "round stars, 36 geometries against the plain way: largest difference of the largest bin", 4e-4))),
@@ -164,6 +164,11 @@ SLOW = (
         ("second_96x384_bins", "second check star: fast kernel against the plain way at 96 x 384 patches, bin by bin, of the mean bin", 1e-5),
         ("second_96x384_minus_kernel_abs", "second check star: the plain way's ln L (96 x 384 patches) minus the fast kernel's, -0.089 found before (both above the shipped value)", 0.2))),
 )
+# counts that the wording of the slow checks relies on: each becomes a check that the script worked on exactly that many
+COUNTS = {"path_approximation_check.py": (("directions", 6000, "random directions in the approximation check"),),
+          "fast_likelihood_stress.py": (("channels", 247, "hard made-up channels kept (of 271 made; the rest the public code's early exit)"),),
+          "kernel_against_plain_way.py": (("geometries", 36, "round-star geometries"), ("refused", 0, "round-star geometries refused")),
+          "one_visible_stretch_check.py": (("rings", 14968, "rings in the one-stretch test"), ("stars", 400, "stars in the one-stretch test"))}
 if slow:
     print("\nthe slow checks (each is a script in 2-python-solution/tools, run here as a command; its own output is shown indented):", flush=True)
     for script, args, items in SLOW:
@@ -184,6 +189,8 @@ if slow:
                 check(name, found[key], limit)
             else:
                 check(name + " [the script gave no %s]" % key, math.inf, limit)
+        for key, expected, what in COUNTS.get(script, ()):
+            check("%s: the number of %s is %d, as the wording above says" % (script, what, expected), abs(found.get(key, math.inf) - expected), 0)
 print("\n%d quick checks: %d hold, %d fail%s ; %.0f s" % (n_quick, sum(results[:n_quick]), n_quick - sum(results[:n_quick]),
       "" if not slow else " ; %d slow checks: %d hold, %d fail" % (len(results) - n_quick, sum(results[n_quick:]), len(results) - n_quick - sum(results[n_quick:])),
       time.perf_counter() - T0))

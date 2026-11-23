@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Writes the tables that the compiled program (3-compiled-solution/nicer_fast.c) reads: everything that is made once and never
 changes between workings-out. All of it comes from our own Python programs and from the public example's data files:
-  the two-variable fit of light's path (fast_kernel._path_fit), the table for the latitude cuts (fast_kernel._tables),
+  the two-variable approximation of light's path (fast_kernel._path_fit), the table for the latitude cuts (fast_kernel._tables),
   Gauss-Legendre points, the Chebyshev tools for the chosen numbers of points (fast_kernel._cheb),
   the energy points and the matrix of energy integrals (quick_example.cheb_energy_matrix),
   the public example's counts, its background limits and the factorial sums, and the public code's constants.

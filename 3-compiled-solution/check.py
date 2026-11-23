@@ -4,9 +4,10 @@
 usage, from the repository's top, on the side that has Python with NumPy:
     python -I -B -X utf8 3-compiled-solution/check.py [nicer_fast | nicer_fast_strict]
 Without a name both forms are checked (make in 3-compiled-solution builds them; on Windows they run on the Linux side through
-WSL, see settings.cfg). For each form, four comparisons with the Python solution:
+WSL, see settings.cfg). For each form, four comparisons with the Python solution, eight lines:
   1. the public quick example at the working setting (10 rings per panel, 16 points, 24 energies): the likelihood
-  2. six stars at three settings: the phase-bin counts, bin by bin, and the likelihood      (tools/compare_c_with_python.py)
+  2. six stars at three settings: the phase-bin counts, bin by bin, the likelihood, and that both programs take the public
+     code's early exit on the same stars                                                    (tools/compare_c_with_python.py)
   3. sixty stars drawn at random from the public example's prior: the same, and that neither program stops
                                                                                             (tools/prior_draws_c_and_python.py)
   4. the likelihood step alone on 247 hard made-up channels, channel by channel             (tools/hard_channels_through_c.py)
@@ -81,7 +82,8 @@ v_py = pl.marginal_loglike_fast(counts, (qe.AREA * qe.NB * (qe.X_BB / BB_CONST))
 missing = []
 for program in wanted:
     print("\n--- %s (%s)" % (program, "the compiler's fast arithmetic" if program == "nicer_fast" else "strict arithmetic"), flush=True)
-    out = settings.run_compiled(program, ["tables.bin", 10, 16, 24, 0, 1.4, 12, 1.0, repr(qe.P["cos_i"]), 0.0, repr(qe.P["colat"]), 0.75, 6.7])
+    P = qe.P
+    out = settings.run_compiled(program, ["tables.bin", 10, 16, 24, 0] + [repr(float(P[k])) for k in ("mass", "radius", "distance", "cos_i", "phase_shift", "colat", "ang_radius", "log10T")])
     line = [l for l in out.splitlines() if l.startswith("ln L =")]
     if not line:
         print("      %s gave no answer: is it built (make in 3-compiled-solution), is tables.bin there, is settings.cfg right? It said: %s"
@@ -93,8 +95,10 @@ for program in wanted:
     check("%s: six stars at three settings, phase-bin counts, of the mean bin (one star seen 0.08 degrees from its axis; the rest 1e-10)" % program,
           r.get("largest_bins", math.inf), 1e-7)
     check("%s: six stars at three settings, ln L, relative (|difference| / |ln L|)" % program, r.get("largest_lnL_rel", math.inf), 1e-8)
+    check("%s: six stars at three settings, cases where only one program took the public code's early exit (ln L = -inf)" % program, r.get("mismatch", math.inf), 0)
     r = script_result("prior_draws_c_and_python.py", [program, "60"])
-    check("%s: sixty prior draws, workings-out on which either program stopped" % program, r.get("py_stopped", math.inf) + r.get("c_stopped", math.inf), 0)
+    check("%s: sixty prior draws, workings-out on which either program stopped, or only one took the early exit" % program,
+          r.get("py_stopped", math.inf) + r.get("c_stopped", math.inf) + r.get("mismatch", math.inf), 0)
     check("%s: sixty prior draws, phase-bin counts, of the mean bin" % program, r.get("largest_bins", math.inf), 1e-7)
     check("%s: sixty prior draws with a finite likelihood in both, ln L, relative" % program, r.get("largest_lnL_rel", math.inf), 1e-9)
     r = script_result("hard_channels_through_c.py", [program])

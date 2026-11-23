@@ -32,7 +32,7 @@ def read_settings():
         raise SettingsError("there is no settings file %s: copy settings.cfg.example to settings.cfg at the repository's top and "
                             "fill in the two folders (%s)" % (SETTINGS_FILE, HELP))
     out = {}
-    with open(SETTINGS_FILE, encoding="utf-8") as fh:
+    with open(SETTINGS_FILE, encoding="utf-8-sig") as fh:          # -sig: a byte-order mark from a Windows editor is dropped
         for number, line in enumerate(fh, 1):
             text = line.split("#", 1)[0].strip()
             if not text:
@@ -70,9 +70,10 @@ def folder(key, must_hold):
     cfg = read_settings()
     if key not in cfg or not cfg[key]:
         raise SettingsError("settings.cfg has no line '%s = <folder>' (%s)" % (key, HELP))
-    path = this_side_path(cfg[key])
+    path = this_side_path(os.path.expanduser(cfg[key]))
     if not os.path.isdir(path):
-        raise SettingsError("settings.cfg: %s = %s is not a folder on this side of the machine (%s)" % (key, path, HELP))
+        raise SettingsError("settings.cfg: %s = %s is not a folder on this side of the machine; check the spelling, and on Windows "
+                            "write it as C:\\... or /mnt/c/... (%s)" % (key, path, HELP))
     if not os.path.isfile(os.path.join(path, must_hold)):
         raise SettingsError("settings.cfg: the folder %s = %s does not hold %s (%s)" % (key, path, must_hold, HELP))
     return path
