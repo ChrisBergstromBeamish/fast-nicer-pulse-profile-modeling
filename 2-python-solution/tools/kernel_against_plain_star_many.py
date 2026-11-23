@@ -1,6 +1,9 @@
 """The fast kernel against the plain way for flattened stars in many geometries, including fast spins (strong flattening),
 observers below the equator and on the axis, spots over the poles. 16 phase bins, two energies. The plain way: 64 x 256
-patches, 32 samples inside each bin."""
+patches, 32 samples inside each bin.
+usage: python -I -B -X utf8 kernel_against_plain_star_many.py        (about fifteen minutes; no reference material is needed;
+       too long for check.py --slow, so it is run on its own)
+The last line is RESULT geometries=... flagged=... refused=... largest=... (flagged: above 2e-4 of the largest bin)."""
 import math, os, sys, warnings
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "code"))
 import numpy as np
@@ -37,3 +40,4 @@ for (M, R, nu, inc, ths, rho) in cases:
     print("%s %.2f Suns, %5.2f km, %3.0f Hz, observer at %5.1f deg, spot at %5.1f deg, radius %.2f: plain mean bin %.2e ; kernel (24 rings, 24 points) minus plain %.1e ; kernel (10, 16) minus plain %.1e"
           % ("  " if ok else "**", M, R, nu, inc, ths, rho, a.mean(), e, e10), flush=True)
 print("%d geometries: %d flagged (above 2e-4 of the largest bin), %d refused, largest difference %.1e" % (len(cases), nflag, nref, worst))
+print("RESULT geometries=%d flagged=%d refused=%d largest=%.3e" % (len(cases), nflag, nref, worst))

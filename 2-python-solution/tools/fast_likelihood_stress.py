@@ -1,6 +1,8 @@
 """The all-channels-at-once likelihood against the reference form, channel by channel, on made-up channels chosen to be hard:
 few counts, source far above or below the data, wide and narrow limits on the background, Codex's round-3 counterexample
-(32 equal source rates of 0.0005 per second, one count, no upper limit)."""
+(32 equal source rates of 0.0005 per second, one count, no upper limit).
+usage: python -I -B -X utf8 fast_likelihood_stress.py        (a few seconds; no reference material is needed)
+The last line, RESULT ..., is read by 2-python-solution/check.py --slow."""
 import math, os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "code"))
 import numpy as np
@@ -37,7 +39,9 @@ if not np.isfinite(tot):
 ref = np.array([pl.marginal_loglike_channel(D[r], Sr[r], T, Sup[r]) for r in range(D.shape[0])])
 diff = det["per_channel"] - ref
 bad = np.where(~(np.abs(diff) < 1e-8))[0]
+largest = np.nanmax(np.abs(diff))
 print("%d made-up channels: largest difference fast minus reference %.2e ; channels above 1e-8: %d ; sent to the reference form by the fast form itself: %d"
-      % (D.shape[0], np.nanmax(np.abs(diff)), bad.size, int((~det["usual"]).sum())))
+      % (D.shape[0], largest, bad.size, int((~det["usual"]).sum())))
 for r in bad[:25]:
     print("   %-55s counts %5.0f: fast %.10f, reference %.10f, difference %+.2e" % (labels[r], D[r].sum(), det["per_channel"][r], ref[r], diff[r]))
+print("RESULT channels=%d largest=%.3e above=%d" % (D.shape[0], largest if np.all(np.isfinite(diff)) else math.inf, bad.size))

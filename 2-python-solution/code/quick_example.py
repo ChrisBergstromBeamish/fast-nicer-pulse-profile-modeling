@@ -119,7 +119,10 @@ def pointwise(P, energies, phases, n_rings=64, n=24, nd=769):
 
 
 if __name__ == "__main__":
-    data_dir = sys.argv[1]
+    # usage: python -I -B -X utf8 quick_example.py [emulated]   (the public example's data folder comes from settings.cfg)
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "tools"))
+    import settings
+    data_dir = settings.data_dir()
     counts, bg, support = load_data(data_dir)
     edges_E = pl.example_instrument_edges()
     print("data: %d channels x %d bins, %d counts ; instrument intervals %.4f to %.4f keV ; expected %.6f, tolerance %.4f"
@@ -128,7 +131,7 @@ if __name__ == "__main__":
         v = ours(P, counts, support, edges_E, n_rings=nr, n=n, nE=nE)
         print("ours: %2d rings per panel, %2d points, %2d energies: ln L = %.6f ; minus the public code's expected value: %+.6f"
               % (nr, n, nE, v, v - EXPECTED), flush=True)
-    if len(sys.argv) > 2 and sys.argv[2] == "emulated":
+    if len(sys.argv) > 1 and sys.argv[1] == "emulated":
         for nr, n, nd in ((64, 24, 769), (64, 32, 3073)):
             t0 = time.perf_counter()
             v = emulated(P, counts, support, edges_E, n_rings=nr, n=n, nd=nd)

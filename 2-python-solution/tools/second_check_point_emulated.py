@@ -1,9 +1,14 @@
+"""The public code's two interpolation steps (its 128 energies, 64 phases) applied to our curve at the public code's second check
+point (radius 10 km, log10 T 6.8, no upper limit on the background).
+usage: python -I -B -X utf8 second_check_point_emulated.py        (several minutes; the public example's data folder from settings.cfg)"""
 import math, os, sys, time
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "code"))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
 import quick_example as qe
 import public_likelihood as pl
-counts, bg, _ = qe.load_data(sys.argv[1])
+import settings
+counts, bg, _ = qe.load_data(settings.data_dir())
 support = np.stack([np.zeros(291), -np.ones(291)], axis=1)
 edges_E = pl.example_instrument_edges()
 P2 = dict(qe.P, radius=10.0, log10T=6.8)
@@ -18,5 +23,3 @@ for nE in (128,):
         v = pl.marginal_loglike(counts, star, qe.T_EXP, support)
         print("the public code's two interpolation steps (%d energies, 64 phases) on our curve (%d rings per panel, %d points, grid %d): ln L = %.6f ; minus expected: %+.6f"
               % (nE, nr, n, nd, v, v - EXP2), flush=True)
-# our bin integrals, but the public code's energy step only; and the public code's phase step only
-E24, W = qe.cheb_energy_matrix(edges_E[0], edges_E[-1], 48, edges_E)

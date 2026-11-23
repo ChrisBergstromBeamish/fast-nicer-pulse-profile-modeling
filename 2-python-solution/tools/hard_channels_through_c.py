@@ -1,10 +1,15 @@
 """The 247 hard made-up channels of fast_likelihood_stress.py (few counts, source far above or below the data, wide, narrow
 and displaced limits, Codex's one-count counterexample) through the compiled copy's likelihood, channel by channel, against
-the step-by-step Python form."""
-import math, os, struct, subprocess, sys
+the step-by-step Python form. The channels are written to 3-compiled-solution/hard_channels.bin, the compiled program writes
+its answers next to it, and both files are removed.
+usage: python -I -B -X utf8 hard_channels_through_c.py [nicer_fast | nicer_fast_strict]     (nicer_fast if no name is given)
+The last line, RESULT ..., is read by 3-compiled-solution/check.py."""
+import math, os, struct, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "code"))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
-import public_likelihood as pl
+import public_likelihood as pl, settings
+program = sys.argv[1] if len(sys.argv) > 1 else "nicer_fast"
 rng = np.random.default_rng(7)
 T, n = 1000.0, 32
 rows_d, rows_s, rows_sup, labels = [], [], [], []
@@ -28,24 +33,28 @@ keep = ~(src - 20.0 * np.sqrt(src) - D.sum(axis=1) > 0.0)
 D, Sr, Sup = D[keep], Sr[keep], Sup[keep]
 labels = [l for l, k in zip(labels, keep) if k]
 fact = pl.log_factorial_sums(D)
-cdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "3-compiled-solution")
+cdir = settings.compiled_dir()
 path = os.path.join(cdir, "hard_channels.bin")
 with open(path, "wb") as fh:
     fh.write(struct.pack("<iid", D.shape[0], n, T))
     for a in (D, Sr, Sup, fact):
         fh.write(np.ascontiguousarray(a, dtype=np.float64).tobytes())
-wsl_c = (lambda p: "/mnt/" + p[0].lower() + p[2:].replace(chr(92), "/") if p[1:2] == ":" else p)(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "3-compiled-solution")))  # the same folder as the Linux side of a Windows machine sees it
-out = subprocess.run(["wsl.exe", "-d", "Ubuntu-24.04", "--", "bash", "-lc", "cd %s && ./nicer_fast tables.bin channels hard_channels.bin" % wsl_c],
-                     capture_output=True, text=True).stdout.replace(chr(0), "")
-print("the compiled copy said:", out.strip())
+out = settings.run_compiled(program, ["tables.bin", "channels", "hard_channels.bin"])
+print("the compiled copy said:", out.strip() or "(nothing: is it built?)")
+if not os.path.isfile(path + ".out"):
+    os.remove(path)
+    print("RESULT channels=%d largest=inf above=%d largest_vs_fast=inf" % (D.shape[0], D.shape[0]))
+    sys.exit(1)
 cvals = np.fromfile(path + ".out", dtype=np.float64)
 ref = np.array([pl.marginal_loglike_channel(D[r], Sr[r], T, Sup[r]) for r in range(D.shape[0])])
 det = {}
 pl.marginal_loglike_fast(D, Sr, T, Sup, fact, details=det)
 diff = cvals - ref
 bad = np.where(~(np.abs(diff) < 1e-8))[0]
+largest, largest_fast = np.nanmax(np.abs(diff)), np.nanmax(np.abs(cvals - det["per_channel"]))
 print("%d hard channels: compiled minus the step-by-step Python form: largest %.2e ; channels above 1e-8: %d ; compiled minus the fast Python form: largest %.2e"
-      % (D.shape[0], np.nanmax(np.abs(diff)), bad.size, np.nanmax(np.abs(cvals - det["per_channel"]))))
+      % (D.shape[0], largest, bad.size, largest_fast))
 for r in bad[:12]:
     print("   %-52s counts %5.0f: compiled %.10f, reference %.10f, difference %+.2e" % (labels[r], D[r].sum(), cvals[r], ref[r], diff[r]))
 os.remove(path); os.remove(path + ".out")
+print("RESULT channels=%d largest=%.3e above=%d largest_vs_fast=%.3e" % (D.shape[0], largest if cvals.size == D.shape[0] else math.inf, bad.size, largest_fast))

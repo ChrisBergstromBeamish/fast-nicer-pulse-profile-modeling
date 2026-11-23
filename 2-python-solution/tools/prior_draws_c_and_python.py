@@ -1,22 +1,25 @@
 """Stars drawn at random from the public quick example's prior (mass 1.0 to 1.6, radius 10 to 13, distance 0.5 to 2,
 cos i 0 to 1, phase shift -0.25 to 0.75, spot colatitude and radius 0.001 to pi/2 - 0.001, log10 T 6 to 7), worked out by
-the Python program and by the compiled copy: does either stop, do the bins agree, do the likelihoods agree."""
-import math, os, subprocess, sys, warnings
+the Python program and by the compiled copy: does either stop, do the bins agree, do the likelihoods agree.
+usage: python -I -B -X utf8 prior_draws_c_and_python.py [nicer_fast | nicer_fast_strict] [number of draws]   (nicer_fast, 40)
+The last line, RESULT ..., is read by 3-compiled-solution/check.py."""
+import math, os, sys, warnings
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "code"))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
-import fast_kernel as fk, quick_example as qe, public_likelihood as pl
+import fast_kernel as fk, quick_example as qe, public_likelihood as pl, settings
 from consts import BB_CONST
-counts, bg, support = qe.load_data(sys.argv[1])
+program = sys.argv[1] if len(sys.argv) > 1 else "nicer_fast"
 ndraw = int(sys.argv[2]) if len(sys.argv) > 2 else 40
+counts, bg, support = qe.load_data(settings.data_dir())
 fact = pl.log_factorial_sums(counts)
 edges_E = pl.example_instrument_edges()
 ph = np.linspace(0.0, 1.0, qe.NB + 1)
-cdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "3-compiled-solution")
-wsl_c = (lambda p: "/mnt/" + p[0].lower() + p[2:].replace(chr(92), "/") if p[1:2] == ":" else p)(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "3-compiled-solution")))  # the same folder as the Linux side of a Windows machine sees it
+cdir = settings.compiled_dir()
 npp, n, nE = 10, 16, 24
 E, W = qe.cheb_energy_matrix(edges_E[0], edges_E[-1], nE, edges_E)
 rng = np.random.default_rng(77)
-worst_bin, worst_l, n_py_stop, n_c_stop, n_finite = 0.0, 0.0, 0, 0, 0
+worst_bin, worst_l, n_py_stop, n_c_stop, n_finite, n_mismatch = 0.0, 0.0, 0, 0, 0, 0
 for k in range(ndraw):
     p = [rng.uniform(1.0, 1.6), rng.uniform(10.0, 13.0), rng.uniform(0.5, 2.0), rng.uniform(0.0, 1.0), rng.uniform(-0.25, 0.75),
          rng.uniform(0.001, math.pi / 2 - 0.001), rng.uniform(0.001, math.pi / 2 - 0.001), rng.uniform(6.0, 7.0)]
@@ -34,14 +37,14 @@ for k in range(ndraw):
         print("draw %d: the Python program stopped: %s: %s ; star %s" % (k, type(ex).__name__, str(ex)[:80], np.round(p, 4).tolist()))
         continue
     dump = "dump_prior_%d.bin" % k
-    cmd = "cd %s && ./nicer_fast tables.bin %d %d %d 0 %s %s" % (wsl_c, npp, n, nE, " ".join(repr(float(x)) for x in p), dump)
-    out = subprocess.run(["wsl.exe", "-d", "Ubuntu-24.04", "--", "bash", "-lc", cmd], capture_output=True, text=True).stdout.replace(chr(0), "")
+    out = settings.run_compiled(program, ["tables.bin", npp, n, nE, 0] + [repr(float(x)) for x in p] + [dump])
     line = [l for l in out.splitlines() if l.startswith("ln L")]
     if not line:
         n_c_stop += 1
         print("draw %d: the compiled copy said: %s ; Python ln L %s ; star %s" % (k, out.strip()[:60], v, np.round(p, 4).tolist()))
         continue
-    vc = float(line[0].split("=")[1])
+    vc = line[0].split("=")[1].strip()
+    vc = -math.inf if vc == "-inf" else float(vc)
     raw = np.fromfile(os.path.join(cdir, dump), dtype=np.float64)
     os.remove(os.path.join(cdir, dump))
     Sc = raw[:qe.NB * nE].reshape(qe.NB, nE)
@@ -51,8 +54,11 @@ for k in range(ndraw):
         n_finite += 1
         worst_l = max(worst_l, abs(vc - v) / max(1.0, abs(v)))
     elif np.isfinite(v) != np.isfinite(vc):
+        n_mismatch += 1
         print("draw %d: one program left by the early exit and the other did not: Python %s, compiled %s" % (k, v, vc))
     if eS > 1e-7:
         print("draw %d: bins differ by %.1e of the mean bin ; star %s" % (k, eS, np.round(p, 4).tolist()))
-print("%d draws from the prior: the Python program stopped on %d, the compiled copy on %d ; largest bin difference %.1e of the mean bin ; %d draws with a finite likelihood in both, largest relative difference %.1e"
-      % (ndraw, n_py_stop, n_c_stop, worst_bin, n_finite, worst_l))
+print("%d draws from the prior: the Python program stopped on %d, the compiled copy on %d ; largest bin difference %.1e of the mean bin ; %d draws with a finite likelihood in both, largest relative difference %.1e ; early exit in one program only: %d"
+      % (ndraw, n_py_stop, n_c_stop, worst_bin, n_finite, worst_l, n_mismatch))
+print("RESULT draws=%d py_stopped=%d c_stopped=%d mismatch=%d largest_bins=%.3e finite=%d largest_lnL_rel=%.3e"
+      % (ndraw, n_py_stop, n_c_stop, n_mismatch, worst_bin, n_finite, worst_l))

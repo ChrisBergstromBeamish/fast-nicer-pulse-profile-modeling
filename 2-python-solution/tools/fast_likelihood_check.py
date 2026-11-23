@@ -1,10 +1,13 @@
-"""The all-channels-at-once likelihood against the reference form, on both of the public code's check points, and timed."""
+"""The all-channels-at-once likelihood against the reference form, on both of the public code's check points, and timed.
+usage: python -I -B -X utf8 fast_likelihood_check.py        (the public example's data folder comes from settings.cfg)"""
 import math, os, sys, time
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "code"))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
 import quick_example as qe
 import public_likelihood as pl
-counts, bg, support = qe.load_data(sys.argv[1])
+import settings
+counts, bg, support = qe.load_data(settings.data_dir())
 fact = pl.log_factorial_sums(counts)
 edges_E = pl.example_instrument_edges()
 nosup = np.stack([np.zeros(291), -np.ones(291)], axis=1)

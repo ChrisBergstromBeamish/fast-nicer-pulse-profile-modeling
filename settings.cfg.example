@@ -1,0 +1,17 @@
+# Settings of one copy of this repository. Copy this file to settings.cfg (same folder, the repository's top), fill in the two
+# folders, and leave settings.cfg out of the repository (it is in .gitignore). Lines are "key = value"; # starts a comment.
+# 1-setup-and-documentation/README.md says where the two folders come from.
+
+# The folder that holds X-PSI's source tree at commit bb5f461e605b22c6251b155b27a914a558757f93. Only its
+# examples/examples_fast/Data folder is read (the four data files of the public quick example).
+xpsi = /home/someone/reference/xpsi
+
+# The folder of the supplementary data of Bogdanov et al. 2019 (ApJ Letters 887, L26): the 24 text files of apjlab5968.
+apjlab5968 = /home/someone/reference/apjlab5968
+
+# Windows only: the Linux distribution under WSL in which the compiled solution is built and run (wsl.exe --list prints the
+# names). Leave the line out to use WSL's default distribution. On Linux the line is not read.
+# wsl = Ubuntu-24.04
+
+# On Windows the folders may be written either way, C:\reference\xpsi or /mnt/c/reference/xpsi: the programs translate between
+# the Windows side and the Linux side themselves.

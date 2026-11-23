@@ -1,26 +1,35 @@
 # -*- coding: utf-8 -*-
-"""Writes the tables that the compiled program (c/nicer_fast.c) reads: everything that is made once and never changes
-between workings-out. All of it comes from our own Python programs and from the public example's data files:
+"""Writes the tables that the compiled program (3-compiled-solution/nicer_fast.c) reads: everything that is made once and never
+changes between workings-out. All of it comes from our own Python programs and from the public example's data files:
   the two-variable fit of light's path (fast_kernel._path_fit), the table for the latitude cuts (fast_kernel._tables),
   Gauss-Legendre points, the Chebyshev tools for the chosen numbers of points (fast_kernel._cheb),
   the energy points and the matrix of energy integrals (quick_example.cheb_energy_matrix),
   the public example's counts, its background limits and the factorial sums, and the public code's constants.
 File format: for each array, int32 length of the name, the name, int32 number of dimensions, int32 sizes, float64 values.
+The public example's Data folder is found through settings.cfg at the repository's top (tools/settings.py).
 
-usage: python export_for_c.py <the example's Data folder> <output file>
+usage: python -I -B -X utf8 export_for_c.py <output file>
 """
 import math
 import os
 import struct
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "code"))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
 import fast_kernel as fk
 import public_likelihood as pl
 import quick_example as qe
+import settings
 from consts import BB_CONST, C_CM_S, GM_SUN
 
-data_dir, out_path = sys.argv[1], sys.argv[2]
+if len(sys.argv) != 2:
+    sys.exit("usage: python -I -B -X utf8 export_for_c.py <output file>")
+out_path = sys.argv[1]
+try:
+    data_dir = settings.data_dir()
+except settings.SettingsError as exc:
+    sys.exit("export_for_c.py: %s" % exc)
 arrays = []
 
 
@@ -71,4 +80,4 @@ with open(out_path, "wb") as fh:
         for s in a.shape:
             fh.write(struct.pack("<i", s))
         fh.write(a.tobytes(order="C"))
-print("wrote %d arrays, %d bytes: %s" % (len(arrays), os.path.getsize(out_path), out_path))
+print("wrote %d arrays, %d bytes: %s (from the public example's data in %s)" % (len(arrays), os.path.getsize(out_path), out_path, data_dir))

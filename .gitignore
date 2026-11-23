@@ -1,7 +1,10 @@
 __pycache__/
 *.pyc
-# made on each machine, never kept: the compiled program, its tables, dumps
+# the settings of one machine (copied from settings.cfg.example; see 1-setup-and-documentation/README.md)
+settings.cfg
+# made on each machine, never kept: the compiled programs, their tables, dumps
 3-compiled-solution/nicer_fast
+3-compiled-solution/nicer_fast_strict
 3-compiled-solution/*.bin
 3-compiled-solution/*.out
 *.npz

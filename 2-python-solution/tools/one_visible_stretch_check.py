@@ -1,8 +1,11 @@
 """Is the visible part of a ring's turn always ONE stretch that starts at the point nearest the observer?
 The fast kernel assumes it (one pair of end directions per ring). Codex's round-3 review asked for the check.
-For many stars inside the public example's prior (and faster-spinning ones), and for many rings each, mu is worked out at
-4000 points along the half-turn; the test counts how often visibility switches on again after it has switched off, and how
-much of the ring's light such a second stretch could hold (the integral of mu over it against the integral over all)."""
+For many stars (1.0 to 2.2 Suns, 9.5 to 15 km, 100 to 716 Hz: wider than the public example's prior) and for many rings each,
+mu is worked out at 4000 points along the half-turn; the test counts how often visibility switches on again after it has
+switched off, and how much of the ring's light such a second stretch could hold (the integral of mu over it against the
+integral over all).
+usage: python -I -B -X utf8 one_visible_stretch_check.py        (about half a minute; no reference material is needed)
+The last line, RESULT ..., is read by 2-python-solution/check.py --slow."""
 import math, os, sys, warnings
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "code"))
 import numpy as np
@@ -59,3 +62,5 @@ print("%d rings on %d stars: rings with a visible stretch that does not start at
 if worst_case:
     print("largest share of a ring's mu-weighted turn in such a stretch: %.2e  (star %.2f Suns, %.2f km, %.0f Hz, observer at %.1f deg, ring at %.1f deg, sin(tilt) %.4f; %d of 4001 points, largest mu there %.2e)"
           % ((worst_share,) + worst_case))
+print("RESULT rings=%d stars=400 second_stretch_rings=%d worst_share=%.3e worst_mu=%.3e worst_sin_tilt=%.4f"
+      % (n_rings_total, n_second, worst_share, worst_case[7] if worst_case else 0.0, abs(worst_case[5]) if worst_case else 0.0))

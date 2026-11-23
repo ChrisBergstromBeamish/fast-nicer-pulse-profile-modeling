@@ -59,14 +59,19 @@ def at_emission(u, inc, theta, mmax, n):
     wgt = (math.pi / n) * 0.5 * (x1 - x2) * np.sin(t) / (math.sin(inc) * math.sin(theta) * np.sqrt(np.maximum(1.0 - cphi * cphi, 1e-300)))
     return np.array([np.sum(wgt * np.cos(m * phi) * x) / math.pi for m in range(mmax + 1)])
 
+# usage: python -I -B -X utf8 count_at_emission_check.py     (a second; no reference material is needed)
+# The last line, RESULT ..., is read by 2-python-solution/check.py --slow: the largest difference at 64 nodes over the three cases.
 u = 4.135 / 12.0        # L / R for 1.4 Suns and 12 km, the test problems' star
 cases = [("never hidden: observer 60 deg, element 20 deg", math.radians(60), math.radians(20)),
          ("hidden for part of the turn: observer 80 deg, element 60 deg", math.radians(80), math.radians(60)),
          ("observer passes straight over it: both 90 deg", math.radians(90), math.radians(90))]
+worst = {8: 0.0, 16: 0.0, 32: 0.0, 64: 0.0}
 for name, inc, th in cases:
     ref = usual_way(u, inc, th, 6)
     print(name, flush=True)
     print("   usual way, 400,000 phases: " + " ".join("%+.7f" % v for v in ref), flush=True)
     for n in (8, 16, 32, 64):
         got = at_emission(u, inc, th, 6, n)
+        worst[n] = max(worst[n], float(np.max(np.abs(got - ref))))
         print("   at emission, %2d nodes:     " % n + " ".join("%+.7f" % v for v in got) + "   largest difference %.1e" % np.max(np.abs(got - ref)), flush=True)
+print("RESULT " + " ".join("largest_%d=%.3e" % (n, worst[n]) for n in (8, 16, 32, 64)))

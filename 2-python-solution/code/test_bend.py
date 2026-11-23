@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 """Check of bend.py against the test article's own tables (Bogdanov et al. 2019, supplementary files):
-bending angle and lensing factor, and travel-time delay, for the test star (1.4 Suns, 12 km)."""
+bending angle and lensing factor, and travel-time delay, for the test star (1.4 Suns, 12 km).
+usage: python -I -B -X utf8 test_bend.py        (the apjlab5968 folder is found through settings.cfg at the repository's top)"""
 import math
 import os
 import sys
 import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "tools"))
 from bend import theta_tau, lensing_factor
+import settings
 
-ref = sys.argv[1]
+ref = settings.ref_dir()
 GM_SUN = 1.32712440018e20      # m^3/s^2 (the Sun's GM, an observed value)
 C = 299792458.0
 M, R = 1.4, 12.0e3
@@ -16,7 +19,7 @@ L = 2.0 * GM_SUN * M / C**2
 u = L / R
 print("L = %.3f m, u = L/R = %.6f" % (L, u))
 
-d = np.loadtxt(ref + "/deflection_angle_lensing_factor_test_CU.txt")
+d = np.loadtxt(os.path.join(ref, "deflection_angle_lensing_factor_test_CU.txt"))
 psi_ref, alpha, lens_ref = d[:, 0], d[:, 1], d[:, 2]
 x = np.cos(alpha)
 th, ta = theta_tau(u, x)
@@ -27,7 +30,7 @@ print("bending angle: %d rows, alpha up to %.4f rad; largest relative difference
 print("lensing factor: largest relative difference %.2e (rows with alpha below 1.5607: %.2e)"
       % (np.max(np.abs(lf / lens_ref - 1.0)), np.max(np.abs(lf[ok] / lens_ref[ok] - 1.0))))
 
-d = np.loadtxt(ref + "/travel_time_delay_test_CU.txt")
+d = np.loadtxt(os.path.join(ref, "travel_time_delay_test_CU.txt"))
 psi_ref, alpha, dt_ref = d[:, 0], d[:, 1], d[:, 2]
 m = alpha > 0
 th, ta = theta_tau(u, np.cos(alpha[m]))
