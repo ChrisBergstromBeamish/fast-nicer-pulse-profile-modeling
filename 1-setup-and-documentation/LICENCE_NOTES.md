@@ -20,8 +20,13 @@ What its own files state:
 
 So X-PSI's licence, in its own words, is the GNU General Public License, version 3 or (at your option) any later version.
 
-What of it is in this repository: nothing. No file of X-PSI is copied here. X-PSI is not imported, built or run by anything
-here. The checks read the text files of its shipped example's data folder (`examples/examples_fast/Data`) as numbers at run
+What of it is in this repository: no file of X-PSI, and one stretch of lines. `2-python-solution/tools/time_public_code.py`,
+the stopwatch of the comparison with the public code, builds the example's objects with lines copied from the example's
+`examples/examples_fast/Modules/main.py`, between two comment lines that say so, so that it times what the example computes.
+X-PSI is not imported, built or run by our programs or by the checks. It is installed, built and run only by the scripts
+of the comparison (`install_reference_code.sh`, `run_public_code_timing.sh`, `refine_public_code.sh`, and
+`time_public_code.py`, which imports it inside X-PSI's own environment), in a folder of its own, and only when a user runs
+them (`README.md` of this folder, section 6). The checks read the text files of its shipped example's data folder (`examples/examples_fast/Data`) as numbers at run
 time, from wherever the user has put the source tree (`README.md` of this folder, sections 2 and 3). Which of our files were
 written after reading which of its source files is in section 5.
 
@@ -76,6 +81,7 @@ tree was run, built, installed or imported"); it is not part of the repository.
 | `2-python-solution/check.py`, `2-python-solution/code/test_public_likelihood.py` | `xpsi/tests/test_background_marginalisation.py` | the unit test's inputs (its counts, its signal at 64 phases, its exposure and phase shift) and its two expected values of the likelihood step |
 | `2-python-solution/tools/second_check_point.py`, `2-python-solution/tools/second_check_point_emulated.py` | `xpsi/tests/test_likelihood.py` | the second check's star, its setting (no upper limit on the background, 128 energies), its expected value and tolerance |
 | `2-python-solution/tools/quick_example_counts_check.py` | the example's shipped file of expected counts, `xpsi_good_expected_hreadable.dat` (read at run time, not copied) | the target of the bin-by-bin comparison of counts |
+| `2-python-solution/tools/time_public_code.py` | `examples/examples_fast/Modules/main.py`; `xpsi/tests/test_likelihood.py` | lines copied from the example's `main.py` (its data, its instrument, the limits of its background, its star, its hot region and its likelihood object: the stretch between the comment lines "copied from main.py" and "end of the copied part"), and the second check's star and shipped value from the test file. The script runs only inside X-PSI's own environment, for the comparison |
 | `3-compiled-solution/nicer_fast.c` | our own `public_likelihood.py` and `fast_kernel.py`, of which it is a port ("A line-by-line port of our own Python programs"); so, at one remove, the same sources as those two files | the same definitions, at one remove |
 | `XPSI_MODEL_SPEC.md` (the specification; not in the repository) | the X-PSI files it quotes verbatim, listed below | the description of what one likelihood evaluation of the example computes |
 
@@ -114,7 +120,9 @@ calls) and the plain-text file `.git/packed-refs` (the source of the commit iden
 
 - No file of X-PSI, of GSL or of the article's supplementary data is copied into this repository. The two data sets the
   checks read are read at run time from the folders the user names in `settings.cfg`.
-- X-PSI is not imported, built or run by anything in this repository.
+- X-PSI is not imported, built or run by our programs or by the checks. The scripts of the comparison with it install,
+  build and run it in a folder of its own when a user runs them; one of them, `time_public_code.py`, imports it there and
+  holds lines copied from its example's `main.py` (sections 1 and 5).
 - Nothing of the graphics-card code of Zhou and Huang is used.
 - The licence of this repository: the GNU General Public License, version 3, chosen by the author (Chris Bergstrom) on
   23 November 2026; the file `LICENSE` at the repository's top holds its text.

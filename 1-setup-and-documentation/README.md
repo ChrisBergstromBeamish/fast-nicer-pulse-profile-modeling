@@ -1,8 +1,8 @@
 # Setup
 
-This page takes a fresh copy of the repository to the point where every check runs. Nothing here downloads anything for
-you: the two public data sets the checks read are named with the addresses their own sources print, and you put them where
-you like.
+This page takes a fresh copy of the repository to the point where every check runs. Nothing the checks need downloads
+anything for you: the two public data sets the checks read are named with the addresses their own sources print, and you
+put them where you like. (Only the install script of the comparison with the public code downloads, section 6.)
 
 ## 1. What is needed
 
@@ -23,7 +23,8 @@ noted in `LICENCE_NOTES.md`).
    `examples/examples_fast/Data` (four text files, of which three are read: the example's counts, its background, its
    expected counts). Get that
    tree, for example with `git clone https://github.com/xpsi-group/xpsi` and `git checkout bb5f461e605b22c6251b155b27a914a558757f93`,
-   and put it anywhere. X-PSI is not installed, not built and not run by anything here.
+   and put it anywhere. X-PSI is NOT needed installed for the checks: none of them installs, builds or runs it. Only the
+   comparison of times and bins with it (section 6) needs it installed.
 2. **The agreed reference curves and tables of Bogdanov et al. 2019**, "Constraining the Neutron Star Mass-Radius Relation
    and Dense Matter Equation of State with NICER. II. Emission from Hot Spots on a Rapidly Rotating Neutron Star",
    Astrophysical Journal Letters 887, L26 (article identifier ab5968; DOI 10.3847/2041-8213/ab5968). The journal offers the
@@ -82,7 +83,32 @@ every check holds, and 2 if a program is not built.
 The Python check commands run on the Windows side and call the compiled program through `wsl.exe` themselves. If `make`
 warns about clock skew on a `/mnt/c` folder, the build is still complete; run `make` again to see it do nothing more.
 
-## 6. The pages in this folder
+## 6. The comparison with the public code (needs X-PSI installed; the checks do not)
+
+The checks above need nothing of X-PSI but its example's data files (section 2). The comparison of its values, bins and
+times with ours, whose printouts of 23 November 2026 are in `measured-2026-11-23/`, needs X-PSI installed and run. Three
+scripts in `2-python-solution/tools/` do that on Linux (on Windows, on the Linux side). Each works in the one folder named
+as `BASE` at its top, the same in all three; change it in all three to put X-PSI in another folder that you can write to.
+
+1. `bash 2-python-solution/tools/install_reference_code.sh` installs X-PSI into that folder, with its own Python
+   (Miniforge) inside it, in the way X-PSI's `docs/source/install.rst` gives, at the commit named in section 2. Unlike
+   everything else in this repository it downloads: Miniforge, X-PSI's source and the packages of X-PSI's environment. It
+   ends with the line `INSTALL_DONE`.
+2. The next two scripts write into the folder `2-python-solution/results`, which they make (`.gitignore` keeps their
+   `.jsonl` and `.npz` files out of the repository). `bash 2-python-solution/tools/run_public_code_timing.sh` runs X-PSI's own tests
+   of its two shipped likelihood values and of its likelihood step, then times X-PSI at its shipped settings and three
+   finer ones, for both shipped checks, and saves its bins (`results/public_code_times.jsonl`).
+   `bash 2-python-solution/tools/refine_public_code.sh` refines its settings one at a time (`results/public_code_refine.jsonl`).
+3. On the side that has our Python with NumPy, from the repository's top (the compiled rows need `make`, section 5):
+
+       python -I -B -X utf8 2-python-solution/tools/compare_with_public_code.py 2-python-solution/results/public_code_times.jsonl "on mains"
+
+   prints X-PSI's values, bins and times beside ours, and the ratios of the times for the quick example. The text in
+   quotes is printed as the first line: say in it whether the laptop is on battery or on mains power, which changes every
+   time measured. `python -I -B -X utf8 2-python-solution/tools/ours_convergence_both_stars.py` needs no X-PSI: it prints
+   ours at settings finer than ours converged, at both checks' stars.
+
+## 7. The pages in this folder
 
 - `DERIVATION.md`: what the programs compute, derived step by step from four named starting points, with the function that
   computes each formula and the check that tests it.
@@ -90,8 +116,10 @@ warns about clock skew on a `/mnt/c` folder, the build is still complete; run `m
   the allowed difference, the time it takes.
 - `COVERAGE.md`: what the programs cover, where they refuse and how, what is approximate, what is not built, and the errors
   found so far.
-- `PUBLIC_CODES.md`: the two public codes this work is set beside, X-PSI and the graphics-card code of Zhou and Huang, and
-  why neither comparison is like for like yet.
+- `PUBLIC_CODES.md`: the two public codes this work is set beside, X-PSI and the graphics-card code of Zhou and Huang:
+  what was measured of X-PSI on the same laptop, and why the comparison with the graphics-card code is not like for like.
+- `measured-2026-11-23/`: what the comparison with X-PSI printed on 23 November 2026, kept as printed (its `README.md`
+  says what each file is).
 - `LICENCE_NOTES.md`: the licences of the public sources read, and which of our files were written after reading which of
   theirs.
 - `ROADMAP.md`: the sprints, one at a time.

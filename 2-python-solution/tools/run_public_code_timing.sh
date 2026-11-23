@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 # Times the public code X-PSI on its own quick example, at its shipped settings and at finer ones (to see where its
 # value goes as its settings are refined). Needs install_reference_code.sh to have ended with INSTALL_DONE.
-# NOT RUN AND NOT TESTED when written (22 Nov 2026).
+# Written on 22 Nov 2026, before the public code could be run here; first run on 23 Nov 2026.
 set -u
 BASE=/root/physics_nicer
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OUT="$HERE/../results/public_code_times.jsonl"
+mkdir -p "$HERE/../results"
 export PATH="$BASE/miniforge/bin:$PATH"
 export OMP_NUM_THREADS=1
 mkdir -p "$BASE/run" && cd "$BASE/run" || { echo "TIMING_FAILED no run folder"; exit 20; }

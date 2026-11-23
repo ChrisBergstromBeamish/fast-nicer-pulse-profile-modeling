@@ -1,35 +1,53 @@
 # -*- coding: utf-8 -*-
-"""Our programs beside the public code's measured times and values (results/public_code_times.jsonl, written by
-time_public_code.py inside X-PSI's environment). For every setting of the public code: its value at the check's star and
-its time; then ours at the same points: values, differences, times, and the ratio of the times; and, where the public
-code's bins were saved, the bins side by side.
+"""Our programs beside the public code's measured times and values (the .jsonl file written by time_public_code.py inside
+X-PSI's environment: run_public_code_timing.sh writes results/public_code_times.jsonl and refine_public_code.sh writes
+results/public_code_refine.jsonl, both in 2-python-solution). For every setting of the public code: its value at the
+check's star; where its bins were saved beside the .jsonl file, the bins side by side and its count rates put through our
+likelihood; ours converged at the same points near the star, and the differences; and, for the quick check only, the
+public code's time, ours in Python and compiled, and the ratio of the times.
 
 Two checks are handled: "quick" (the shipped quick example: background limited to 0.9 to 1.1 of a given one) and "second"
 (xpsi/tests/test_likelihood.py: radius 10, log10 T 6.8, no upper limit on the background).
 
-usage: python compare_with_public_code.py <the example's Data folder> <public_code_times.jsonl>
+Changed on 23 Nov 2026, after the first run of the public code on this machine:
+  - the public code's points that fell outside its own limits are left out, and the printout says how many. At the
+    second check the star sits on the public code's lower limit of the radius, so about half of the points near it that
+    time_public_code.py picks are refused at once (the public code answers with no evaluation); their times are not times
+    of an evaluation;
+  - times and ratios are given for the quick check only; for the second check, values and bins only;
+  - ours in Python is timed as the public code was: one evaluation per point, a different star each time, over the same
+    points (five passes), fastest and median; the compiled program is timed by its own mode -300 (a different star at
+    every working-out, the mean over 300 of them, fastest of 7 rounds).
+
+usage: python -I -B -X utf8 2-python-solution/tools/compare_with_public_code.py <public_code_times.jsonl> [a note on the power state]
+       The public example's data folder comes from settings.cfg; the compiled rows need `make` run in 3-compiled-solution.
+       Run it when nothing else is running on the machine, and say in the note whether the machine is on battery or on
+       mains power (on this laptop every time was longer on battery).
 """
 import json
 import math
 import os
-import subprocess
 import sys
 import time
 for _v in ("OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "OMP_NUM_THREADS"):
     os.environ[_v] = "1"          # one thread, set before NumPy loads, so that the time is for one processor core
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "code"))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
 import fast_kernel as fk
 import public_likelihood as pl
 import quick_example as qe
+import settings
 from consts import BB_CONST
 
-counts, bg, support = qe.load_data(sys.argv[1])
+if len(sys.argv) < 2:
+    print("usage: python -I -B -X utf8 2-python-solution/tools/compare_with_public_code.py <public_code_times.jsonl> [a note on the power state]")
+    sys.exit(2)
+counts, bg, support = qe.load_data(settings.data_dir())
 nosup = np.stack([np.zeros(counts.shape[0]), -np.ones(counts.shape[0])], axis=1)
 fact = pl.log_factorial_sums(counts)
 edges_E = pl.example_instrument_edges()
 ph_edges = np.linspace(0.0, 1.0, qe.NB + 1)
-WSL_C = (lambda p: "/mnt/" + p[0].lower() + p[2:].replace(chr(92), "/") if p[1:2] == ":" else p)(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "3-compiled-solution")))  # the same folder as the Linux side of a Windows machine sees it
 
 
 def make(nr, n, nE, sup, want_star=False):
@@ -46,11 +64,10 @@ def make(nr, n, nE, sup, want_star=False):
     return like
 
 
-def compiled(p, npp, n, nE, reps=0, no_upper=False):
-    """Our compiled copy (c/nicer_fast, on the Linux side): its ln L at the star p, and with reps its time per working-out (s)."""
-    cmd = "cd %s && %s./nicer_fast tables.bin %d %d %d %d %s" % (WSL_C, "NICER_NO_UPPER_LIMIT=1 " if no_upper else "", npp, n, nE, reps,
-                                                               " ".join(repr(float(x)) for x in p))
-    out = subprocess.run(["wsl.exe", "-d", "Ubuntu-24.04", "--", "bash", "-lc", cmd], capture_output=True, text=True).stdout.replace(chr(0), "")
+def compiled(p, npp, n, nE, reps=0):
+    """Our compiled copy (3-compiled-solution/nicer_fast, run through settings.run_compiled), with the quick check's limits
+    on the background: its ln L at the star p, and with reps its time per working-out (s)."""
+    out = settings.run_compiled("nicer_fast", ["tables.bin", npp, n, nE, reps] + [repr(float(x)) for x in p])
     val, tm = None, None
     for line in out.splitlines():
         if line.startswith("ln L ="):
@@ -60,19 +77,23 @@ def compiled(p, npp, n, nE, reps=0, no_upper=False):
     return val, tm
 
 
-def best_time(f, p, reps=5, inner=20):
-    best = 1e9
-    for _ in range(reps):
-        t0 = time.perf_counter()
-        for _ in range(inner):
-            f(p)
-        best = min(best, (time.perf_counter() - t0) / inner)
-    return best
+def times_over_points(f, pts, passes=5):
+    """One evaluation per point, a different star each time, as the public code was timed; all the single times."""
+    f(pts[0])
+    out = []
+    for _ in range(passes):
+        for q in pts:
+            t0 = time.perf_counter()
+            f(q)
+            out.append(time.perf_counter() - t0)
+    return sorted(out)
 
 
 SETTINGS = (("10 rings per panel, 16 points, 24 energies", (10, 16, 24)), ("8 rings per panel, 12 points, 16 energies", (8, 12, 16)))
 P_QUICK = [1.4, 12.0, 1.0, math.cos(60 * math.pi / 180), 0.0, 70 * math.pi / 180, 0.75, 6.7]
-recs = [json.loads(line) for line in open(sys.argv[2], encoding="utf-8") if line.strip()]
+recs = [json.loads(line) for line in open(sys.argv[1], encoding="utf-8") if line.strip()]
+if len(sys.argv) > 2:
+    print("power state when this was run: %s" % sys.argv[2])
 conv_at = {}
 for rec in recs:
     mode = rec.get("mode", "quick")
@@ -88,10 +109,8 @@ for rec in recs:
           % (s["sqrt_num_cells"], s["num_leaves"], s["num_rays"], s["num_energies"], rec.get("xpsi_version", "?"), mode))
     print("   at the star: %.6f ; minus its shipped value %+.6f ; minus ours converged %+.6f"
           % (rec["value_at_p"], rec["value_at_p"] - rec["shipped"], rec["value_at_p"] - conv_at[mode]))
-    print("   time per likelihood evaluation: fastest %.4f s, median %.4f s over %d calls"
-          % (rec["fastest_s"], rec["median_s"], len(rec["times_s"])))
     # the bins, where the public code's were saved
-    npz = "%s.%s_cells%d_leaves%d_rays%d_energies%d.npz" % (sys.argv[2], mode, s["sqrt_num_cells"], s["num_leaves"], s["num_rays"], s["num_energies"])
+    npz = "%s.%s_cells%d_leaves%d_rays%d_energies%d.npz" % (sys.argv[1], mode, s["sqrt_num_cells"], s["num_leaves"], s["num_rays"], s["num_energies"])
     if os.path.isfile(npz):
         z = np.load(npz)
         if "rate" in z and "signal_phases" in z:
@@ -104,24 +123,35 @@ for rec in recs:
             # the exchange: its rates through our likelihood
             print("   its rates through our likelihood: %.6f (its own likelihood gave %.6f)"
                   % (pl.marginal_loglike_fast(counts, theirs, qe.T_EXP, sup, fact), rec["value_at_p"]))
-    pts = rec["points"]
+    ok = [i for i, val in enumerate(rec["values"]) if val > -1.0e10]
+    if len(ok) < len(rec["values"]):
+        print("   %d of its %d points near the star were outside its own limits (it answered at once, with no evaluation); left out"
+              % (len(rec["values"]) - len(ok), len(rec["values"])))
+    pts = [rec["points"][i] for i in ok]
     if not pts:
         continue
     oc = np.array([conv(q) for q in pts])
-    xv = np.array(rec["values"])
+    xv = np.array([rec["values"][i] for i in ok])
     print("   at its %d points near the star: public minus ours converged: mean %+.4f, largest %.4f"
           % (len(pts), float(np.mean(xv - oc)), float(np.max(np.abs(xv - oc)))))
+    if mode != "quick":
+        continue                  # times and ratios for the quick check only (the docstring says why)
+    xt = sorted(rec["times_s"][i] for i in ok)
+    x_fast, x_med = xt[0], xt[len(xt) // 2]
+    print("   its time per likelihood evaluation, a different star each time: fastest %.4f s, median %.4f s over %d evaluations"
+          % (x_fast, x_med, len(xt)))
     for label, (npp, n, nE) in SETTINGS:
         f = make(npp, n, nE, sup)
         ow = np.array([f(q) for q in pts])
-        t = best_time(f, pts[0])
-        print("   ours in Python, %s: largest difference from ours converged %.4f ; %.2f ms per evaluation ; public code's fastest time / ours = %.0f"
-              % (label, float(np.max(np.abs(ow - oc))), t * 1e3, rec["fastest_s"] / t))
+        ts = times_over_points(f, pts)
+        t_fast, t_med = ts[0], ts[len(ts) // 2]
+        print("   ours in Python, %s: largest difference from ours converged %.4f ; fastest %.2f ms, median %.2f ms over %d evaluations ; public code's time / ours: fastest %.0f, median %.0f"
+              % (label, float(np.max(np.abs(ow - oc))), t_fast * 1e3, t_med * 1e3, len(ts), x_fast / t_fast, x_med / t_med))
     for label, (npp, n, nE) in SETTINGS:
-        vals = [compiled(q, npp, n, nE, no_upper=(mode == "second"))[0] for q in pts]
+        vals = [compiled(q, npp, n, nE)[0] for q in pts]
         if any(v is None for v in vals):
             print("   ours compiled, %s: no answer from the compiled program (is it built?)" % label)
             continue
-        tm = compiled(pts[0], npp, n, nE, reps=-300, no_upper=(mode == "second"))[1]
-        print("   ours compiled, %s: largest difference from ours converged %.4f ; %.3f ms per evaluation ; public code's fastest time / ours = %.0f"
-              % (label, float(np.max(np.abs(np.array(vals) - oc))), tm * 1e3, rec["fastest_s"] / tm))
+        tm = compiled(pts[0], npp, n, nE, reps=-300)[1]
+        print("   ours compiled, %s: largest difference from ours converged %.4f ; %.3f ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest %.0f, its median %.0f"
+              % (label, float(np.max(np.abs(np.array(vals) - oc))), tm * 1e3, x_fast / tm, x_med / tm))

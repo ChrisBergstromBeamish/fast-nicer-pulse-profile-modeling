@@ -4,7 +4,7 @@
 # no system package is installed (if the system has no C compiler, one is put inside X-PSI's own environment).
 # To undo: delete /root/physics_nicer.
 # Follows X-PSI's documented steps (docs/source/install.rst): conda env create -f environment.yml ; CC=gcc pip install .
-# NOT RUN AND NOT TESTED when written (22 Nov 2026).
+# Written on 22 Nov 2026, before the install was allowed; first run on 23 Nov 2026, when it ended with INSTALL_DONE.
 set -u
 BASE=/root/physics_nicer
 mkdir -p "$BASE" && cd "$BASE" || { echo "INSTALL_FAILED cannot make $BASE"; exit 10; }

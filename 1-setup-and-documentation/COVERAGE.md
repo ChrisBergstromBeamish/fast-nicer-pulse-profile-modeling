@@ -317,18 +317,20 @@ that edge, with the reason it was left there.
   - a certificate for the inward turning point inside the integrals (the kernel only asks inside its guarded range);
   - the public code's own equality test and its handling of several components, energies beyond its grid and failure
     values (none is active in the shipped example).
-- **The run of the public code.** X-PSI has not been installed, built or run on this machine. The script that would time
-  it and save its bins is not in this repository; `compare_with_public_code.py` reads that script's output and is
-  untested against the public code. Everything in section 5 that waits on the run waits on the install, which is the
-  author's decision.
+- **The public code beyond its two shipped checks.** X-PSI was installed and run on this laptop on 23 November 2026
+  (`PUBLIC_CODES.md`, section 1.2), at the quick example's star and the second check's, at its shipped settings and 31
+  finer ones (`CLAIMS.md`, group H). Not done: a comparison with it at other stars, with several spots or a tabulated
+  atmosphere, or on another machine; and a time of it at the second check's star (section 6, item 13).
 
 ## 5. What the agreement with the public code does not show
 
 **In plain words.** Our likelihood for the shipped quick example passes the public code's own check, and our two programs
-agree with each other bin by bin. That is a result about a method of calculation. It does not show that every bin equals
-the public code's, it does not say whose number is nearer the exact value of the model, and at the public code's second
-check point our number fails the check by many times its tolerance. Each of these is written below exactly as strongly as
-the measurements allow.
+agree with each other bin by bin. That is a result about a method of calculation. With the public code run on this laptop
+(23 November 2026), its likelihood step gives ours to the last printed digit, so every difference in the score lies in the
+counts; and as its settings are refined its counts move toward ours, per phase bin with its mesh and per channel with its
+energies, while ours do not move when ours are refined. At the public code's second check point our number fails the
+shipped check by many times its tolerance; the public code's own number there, at finer settings, lies 6.28 above its
+shipped one and 0.24 from ours. Each of these is written below exactly as strongly as the measurements allow.
 
 ### 5.1 The quick example's likelihood (section 3.1's table)
 
@@ -336,8 +338,12 @@ What this shows: our score passes the public check by its stated tolerance, at e
 upward.
 
 What this does not show: that every one of the 9,312 bin predictions equals the public code's (a single score cannot show
-that; section 5.2 looks at the bins). Nor which of the two scores, ours or the shipped one, is nearer the exact value of
-the model: the shipped one is 0.093 from both of our programs, and the public code has not been run at finer settings.
+that; sections 5.2 and 5.3 look at the bins). Nor, from the score alone, which of the two scores, ours or the shipped one,
+is nearer the exact value of the model: the shipped one is 0.093 from both of our programs. The public code run at finer
+settings on 23 November 2026 answers it bin by bin, not by its score: its counts move toward ours as its mesh and its
+energies are refined, and ours do not move (`CLAIMS.md`, H8 and H11); its score at this star does not approach ours
+steadily (+0.093 at its shipped settings, then −0.064, −0.080, +0.029, +0.013 and +0.002 at finer ones; H10), because its
+errors in energy and in its mesh partly cancel.
 
 ### 5.2 Counts, bin by bin (`quick_example_counts_check.py`)
 
@@ -360,7 +366,9 @@ What this shows: the total and the interior channel sums agree to 2 parts in 100
 first and last channels and in the faint slices.
 
 What this does not show: why. Saying that those differences are the public code's interpolation and mesh needs the run that
-made the file, its background convention and a controlled comparison.
+made the file, its background convention and a controlled comparison. The run that made the file is still not known. The
+controlled comparison of the public code's own counts with ours, at its shipped settings and finer ones, was made on
+23 November 2026 (section 5.3 and `CLAIMS.md`, H8); it compares the public code as run here, not the file.
 
 ### 5.3 The public code's second shipped check (`second_check_point.py`)
 
@@ -374,6 +382,8 @@ made the file, its background convention and a controlled comparison.
 | our second program, the plain way, 48 × 192 patches | −47875.0144 | +6.264 |
 | our second program, the plain way, 96 × 384 patches | −47874.8493 | +6.429 |
 | X-PSI's two interpolation steps (with its 128 energies) applied to our curve (`second_check_point_emulated.py`; the record gave −47870.96 ±0.2) | −47870.95 | +10.32 |
+| X-PSI itself, run here on 23 November 2026, at its shipped settings (32 cells, 64 rotation steps, 512 rays, 128 energies) | −47881.2782 | 0.000 |
+| X-PSI itself, run here, at 128 cells, 256 rotation steps, 512 rays, 384 energies | −47874.9971 | +6.281 |
 
 **Ours fails this check: +6.5 against a tolerance of 0.479.** Measured facts about this point: the star does not match the
 data (the model alone gives 666,370 counts against 578,528, and exceeds the data in 238 of 291 channels), and a change of
@@ -393,10 +403,32 @@ here and a third of the gap there. The shipped expected-counts file, made at fin
 ours by 1.5 parts in 100,000 in total. This is what one would see if the public code's counts come down toward ours as its
 settings are refined, and it is also what one would see by coincidence. The run at finer settings decides.
 
-What this does not show: the public code's bins at this point. They have not been compared with ours, so the 7 parts in
-100,000 is an equivalent, not a measured count difference. And it does not show that the public code moves toward our
-number when its settings are refined. That is the test that decides, and it needs the public code installed and run at
-finer settings on this machine, which has not been done (section 4, last item).
+**The cause, measured on 23 November 2026: the shipped number is the public code at coarse settings for this star.** The
+public code was installed and run on this laptop (`PUBLIC_CODES.md`, section 1.2; `CLAIMS.md`, H2, H3 and H9):
+
+- at its shipped settings it gives its shipped number, −47881.278177; its count rates put through our likelihood give the
+  same number to the last printed digit, so the whole gap of 6.52 lies in the counts;
+- with its settings refined to 128 cells, 256 rotation steps, 512 rays and 384 energies it gives −47874.997, which is 6.28
+  above its shipped number and 0.24 below ours (−47874.760); that check's tolerance is 0.479, so the public code at those
+  settings would fail its own shipped check too;
+- one setting at a time from its shipped ones, its number moves by +7.1 and +9.3 with its mesh (64 and 128 cells), by −2.6
+  to −4.4 with its energies (192 to 512), by +1.1 with its rotation steps (128 and 256), and by +0.004 with its rays (1024
+  and 2048);
+- its bins move toward ours as its mesh and its energies are refined: per phase bin from 6.3e-4 at its shipped settings to
+  1.2e-5 at 192 cells (with 384 rotation steps and 192 energies), per channel from 2.5e-3 to 4.8e-4 at 512 energies; ours
+  do not move (three times finer settings of
+  ours change ln L here by 0.000001 and no bin by more than 2.1e-7: H11).
+
+So the arithmetic observation above is answered in part: the public code's counts do come down toward ours as its settings
+are refined. But not as one excess of one sign in every bin: at its shipped settings its counts total only 3.2 parts in a
+million more than ours, and the gap comes from the differences per phase bin and per channel (up to 6.3e-4 and 2.5e-3), at
+a star where the score is two hundred times more sensitive to the counts than at the quick example's.
+
+What this does not show: a value of the public code's at this star that has stopped moving. Its score is not steady across
+the finer settings run (from ours: +1.85 at 64 cells, 128 rotation steps, 512 rays, 128 energies; +3.97 at 128, 256, 512,
+128; +1.77 at 192, 384, 512, 192; −2.36 at 64, 128, 512, 384; −0.24 at 128, 256, 512, 384), because its errors in energy
+and in its mesh partly cancel; its bins, not its score, are what move steadily toward ours. Nor does it give a time of the
+public code at this star (section 6, item 13).
 
 ### 5.4 The physics
 
@@ -430,3 +462,14 @@ The list below is the project's own list of its errors, kept whole and in the wo
     round 4). Corrected.
 11. The times written at the top of the archived messages of that night ("about HH:MM") are my estimates and run up to
     1.5 hours ahead of the laptop's clock; the ledger's own times are right.
+12. Before the public code was measured I expected our programs to be about 30 to 60 times faster than it in Python and
+    250 to 500 times compiled, from my estimate of its time for the quick example, 0.1 to 0.2 s, scaled from its
+    tutorial's time. Measured on 23 November 2026 on mains power: 49 to 55 ms at its shipped settings, so 17 times in
+    Python and 116 to 131 times compiled. My estimate of its time was about 2 to 4 times too long, and the ratios I expected
+    about 2 to 4 times too high.
+13. My stopwatch for the public code (`time_public_code.py`) times it at stars near the check's star, each number moved by
+    up to 1 part in 1000. At the second check that star sits on the public code's lower limit of the radius, so about half
+    of the nearby stars were refused at once (3 of 4, and 1 of 2, at the two settings that timed more than one star), and
+    their times are not times of an evaluation. Found when it was first run. Times and ratios are now given for the quick
+    example only (`compare_with_public_code.py` leaves refused stars out); the values and the bins at the check's star
+    itself are not affected.

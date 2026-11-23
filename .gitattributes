@@ -1,2 +1,4 @@
 # every text file keeps Unix line ends on every machine (the shell scripts run on Linux)
 * text=auto eol=lf
+# the printouts of 23 November 2026 are kept byte for byte as they were printed (three of them end their lines CR LF)
+1-setup-and-documentation/measured-2026-11-23/*.txt -text

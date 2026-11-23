@@ -1,12 +1,18 @@
 # -*- coding: utf-8 -*-
 """Stopwatch for the public code X-PSI on its own shipped quick example. Runs INSIDE X-PSI's own environment, once it is
-installed (NOT RUN when written, 22 Nov 2026: the install was not allowed yet).
+installed (written on 22 Nov 2026, before the install was allowed; first run on 23 Nov 2026).
 
 It builds the objects exactly as examples/examples_fast/Modules/main.py does (the lines are copied from it), at the
 numerical settings given on the command line, then
   1. evaluates the likelihood at the example's star p and prints it beside the shipped value -32552.616905;
   2. times the likelihood at points near p, a new point at every call (as a sampler does), caches cleared.
 One line of JSON is appended to the output file.
+
+Known limit, found when it was first run (23 Nov 2026), for the second check: the points near the star are the star with
+each number moved by up to 1 part in 1000 either way, and that star's radius, 10, is the public code's lower limit of the
+radius. So about half of the points lie below that limit and are refused at once (the public code answers with no
+evaluation); their times are not times of an evaluation. compare_with_public_code.py leaves the refused points out and
+gives times and ratios for the quick check only. The value and the bins at the star itself are not affected.
 
 usage: python time_public_code.py <xpsi source root> <output .jsonl> [sqrt_num_cells num_leaves num_rays num_energies [n_calls [quick|second]]]
   second: the public code's second shipped check instead (xpsi/tests/test_likelihood.py: radius 10, log10 T 6.8, no limits

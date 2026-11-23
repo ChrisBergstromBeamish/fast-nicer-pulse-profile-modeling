@@ -1,0 +1,220 @@
+power state when this was run: on battery; values and bins only are used from this file
+
+=== the quick check: ours, converged, at its star: -32552.710363 ; the public code's shipped value -32552.616905 ; ours minus shipped -0.093458
+
+public code at sqrt_num_cells 32, leaves 64, rays 512, energies 128 (version 3.5.0b1), quick check:
+   at the star: -32552.725108 ; minus its shipped value -0.108203 ; minus ours converged -0.014745
+   bins (its rates through its own phase step, against ours converged): total -3.22e-06 ; largest 4.15e-03 ; r.m.s. 5.65e-04 ; per phase bin largest 9.67e-04 ; per channel largest 3.86e-03
+   its rates through our likelihood: -32552.725108 (its own likelihood gave -32552.725108)
+   at its 1 points near the star: public minus ours converged: mean +0.1149, largest 0.1149
+   its time per likelihood evaluation, a different star each time: fastest 0.1838 s, median 0.1838 s over 1 evaluations
+   ours in Python, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; fastest 4.39 ms, median 4.63 ms over 5 evaluations ; public code's time / ours: fastest 42, median 40
+   ours in Python, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; fastest 3.45 ms, median 3.53 ms over 5 evaluations ; public code's time / ours: fastest 53, median 52
+   ours compiled, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; 0.609 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 302, its median 302
+   ours compiled, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; 0.427 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 430, its median 430
+
+public code at sqrt_num_cells 32, leaves 64, rays 512, energies 192 (version 3.5.0b1), quick check:
+   at the star: -32552.639611 ; minus its shipped value -0.022706 ; minus ours converged +0.070752
+   bins (its rates through its own phase step, against ours converged): total +1.20e-05 ; largest 2.80e-03 ; r.m.s. 4.63e-04 ; per phase bin largest 9.82e-04 ; per channel largest 2.59e-03
+   its rates through our likelihood: -32552.639611 (its own likelihood gave -32552.639611)
+   at its 1 points near the star: public minus ours converged: mean +0.1941, largest 0.1941
+   its time per likelihood evaluation, a different star each time: fastest 0.2345 s, median 0.2345 s over 1 evaluations
+   ours in Python, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; fastest 4.93 ms, median 5.69 ms over 5 evaluations ; public code's time / ours: fastest 48, median 41
+   ours in Python, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; fastest 3.36 ms, median 3.43 ms over 5 evaluations ; public code's time / ours: fastest 70, median 68
+   ours compiled, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; 0.606 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 387, its median 387
+   ours compiled, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; 0.430 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 545, its median 545
+
+public code at sqrt_num_cells 32, leaves 64, rays 512, energies 256 (version 3.5.0b1), quick check:
+   at the star: -32552.616078 ; minus its shipped value +0.000827 ; minus ours converged +0.094285
+   bins (its rates through its own phase step, against ours converged): total +1.73e-05 ; largest 1.78e-03 ; r.m.s. 4.37e-04 ; per phase bin largest 9.88e-04 ; per channel largest 1.62e-03
+   its rates through our likelihood: -32552.616078 (its own likelihood gave -32552.616078)
+   at its 1 points near the star: public minus ours converged: mean +0.2155, largest 0.2155
+   its time per likelihood evaluation, a different star each time: fastest 0.2431 s, median 0.2431 s over 1 evaluations
+   ours in Python, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; fastest 4.40 ms, median 4.76 ms over 5 evaluations ; public code's time / ours: fastest 55, median 51
+   ours in Python, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; fastest 3.49 ms, median 3.62 ms over 5 evaluations ; public code's time / ours: fastest 70, median 67
+   ours compiled, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; 0.596 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 408, its median 408
+   ours compiled, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; 0.411 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 591, its median 591
+
+public code at sqrt_num_cells 32, leaves 64, rays 512, energies 384 (version 3.5.0b1), quick check:
+   at the star: -32552.632434 ; minus its shipped value -0.015529 ; minus ours converged +0.077929
+   bins (its rates through its own phase step, against ours converged): total +2.10e-05 ; largest 1.16e-03 ; r.m.s. 4.26e-04 ; per phase bin largest 9.91e-04 ; per channel largest 1.03e-03
+   its rates through our likelihood: -32552.632434 (its own likelihood gave -32552.632434)
+   at its 1 points near the star: public minus ours converged: mean +0.1976, largest 0.1976
+   its time per likelihood evaluation, a different star each time: fastest 0.3478 s, median 0.3478 s over 1 evaluations
+   ours in Python, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; fastest 4.56 ms, median 5.70 ms over 5 evaluations ; public code's time / ours: fastest 76, median 61
+   ours in Python, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; fastest 3.68 ms, median 5.52 ms over 5 evaluations ; public code's time / ours: fastest 94, median 63
+   ours compiled, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; 0.613 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 568, its median 568
+   ours compiled, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; 0.423 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 823, its median 823
+
+public code at sqrt_num_cells 32, leaves 64, rays 512, energies 512 (version 3.5.0b1), quick check:
+   at the star: -32552.640614 ; minus its shipped value -0.023709 ; minus ours converged +0.069749
+   bins (its rates through its own phase step, against ours converged): total +2.23e-05 ; largest 1.01e-03 ; r.m.s. 4.25e-04 ; per phase bin largest 9.93e-04 ; per channel largest 7.39e-04
+   its rates through our likelihood: -32552.640614 (its own likelihood gave -32552.640614)
+   at its 1 points near the star: public minus ours converged: mean +0.1889, largest 0.1889
+   its time per likelihood evaluation, a different star each time: fastest 0.4622 s, median 0.4622 s over 1 evaluations
+   ours in Python, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; fastest 6.60 ms, median 7.35 ms over 5 evaluations ; public code's time / ours: fastest 70, median 63
+   ours in Python, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; fastest 5.87 ms, median 7.28 ms over 5 evaluations ; public code's time / ours: fastest 79, median 63
+   ours compiled, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; 0.608 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 761, its median 761
+   ours compiled, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; 0.420 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 1099, its median 1099
+
+public code at sqrt_num_cells 32, leaves 128, rays 512, energies 64 (version 3.5.0b1), quick check:
+   at the star: -32552.603586 ; minus its shipped value +0.013319 ; minus ours converged +0.106777
+   bins (its rates through its own phase step, against ours converged): total -8.88e-05 ; largest 1.07e-02 ; r.m.s. 1.25e-03 ; per phase bin largest 9.29e-04 ; per channel largest 8.26e-03
+   its rates through our likelihood: -32552.603586 (its own likelihood gave -32552.603586)
+   at its 1 points near the star: public minus ours converged: mean +0.2356, largest 0.2356
+   its time per likelihood evaluation, a different star each time: fastest 0.1350 s, median 0.1350 s over 1 evaluations
+   ours in Python, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; fastest 5.06 ms, median 7.02 ms over 5 evaluations ; public code's time / ours: fastest 27, median 19
+   ours in Python, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; fastest 4.32 ms, median 6.44 ms over 5 evaluations ; public code's time / ours: fastest 31, median 21
+   ours compiled, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; 0.597 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 226, its median 226
+   ours compiled, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; 0.422 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 320, its median 320
+
+public code at sqrt_num_cells 32, leaves 256, rays 512, energies 64 (version 3.5.0b1), quick check:
+   at the star: -32552.604129 ; minus its shipped value +0.012776 ; minus ours converged +0.106234
+   bins (its rates through its own phase step, against ours converged): total -9.11e-05 ; largest 1.07e-02 ; r.m.s. 1.25e-03 ; per phase bin largest 9.20e-04 ; per channel largest 8.26e-03
+   its rates through our likelihood: -32552.604129 (its own likelihood gave -32552.604129)
+   at its 1 points near the star: public minus ours converged: mean +0.2325, largest 0.2325
+   its time per likelihood evaluation, a different star each time: fastest 0.3662 s, median 0.3662 s over 1 evaluations
+   ours in Python, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; fastest 6.10 ms, median 6.77 ms over 5 evaluations ; public code's time / ours: fastest 60, median 54
+   ours in Python, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; fastest 5.46 ms, median 5.76 ms over 5 evaluations ; public code's time / ours: fastest 67, median 64
+   ours compiled, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; 0.585 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 626, its median 626
+   ours compiled, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; 0.412 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 889, its median 889
+
+public code at sqrt_num_cells 64, leaves 64, rays 512, energies 64 (version 3.5.0b1), quick check:
+   at the star: -32552.669358 ; minus its shipped value -0.052453 ; minus ours converged +0.041005
+   bins (its rates through its own phase step, against ours converged): total -9.75e-05 ; largest 1.08e-02 ; r.m.s. 1.21e-03 ; per phase bin largest 2.28e-04 ; per channel largest 8.27e-03
+   its rates through our likelihood: -32552.669358 (its own likelihood gave -32552.669358)
+   at its 1 points near the star: public minus ours converged: mean +0.1426, largest 0.1426
+   its time per likelihood evaluation, a different star each time: fastest 0.3160 s, median 0.3160 s over 1 evaluations
+   ours in Python, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; fastest 4.33 ms, median 4.81 ms over 5 evaluations ; public code's time / ours: fastest 73, median 66
+   ours in Python, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; fastest 3.26 ms, median 3.57 ms over 5 evaluations ; public code's time / ours: fastest 97, median 89
+   ours compiled, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; 0.600 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 527, its median 527
+   ours compiled, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; 0.423 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 748, its median 748
+
+public code at sqrt_num_cells 128, leaves 64, rays 512, energies 64 (version 3.5.0b1), quick check:
+   at the star: -32552.687074 ; minus its shipped value -0.070169 ; minus ours converged +0.023289
+   bins (its rates through its own phase step, against ours converged): total -1.00e-04 ; largest 1.08e-02 ; r.m.s. 1.21e-03 ; per phase bin largest 1.50e-04 ; per channel largest 8.27e-03
+   its rates through our likelihood: -32552.687074 (its own likelihood gave -32552.687074)
+   at its 1 points near the star: public minus ours converged: mean +0.1149, largest 0.1149
+   its time per likelihood evaluation, a different star each time: fastest 1.0112 s, median 1.0112 s over 1 evaluations
+   ours in Python, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; fastest 8.17 ms, median 10.42 ms over 5 evaluations ; public code's time / ours: fastest 124, median 97
+   ours in Python, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; fastest 5.16 ms, median 5.52 ms over 5 evaluations ; public code's time / ours: fastest 196, median 183
+   ours compiled, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; 0.644 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 1571, its median 1571
+   ours compiled, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; 0.471 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 2145, its median 2145
+
+public code at sqrt_num_cells 32, leaves 64, rays 1024, energies 64 (version 3.5.0b1), quick check:
+   at the star: -32552.616920 ; minus its shipped value -0.000015 ; minus ours converged +0.093443
+   bins (its rates through its own phase step, against ours converged): total -8.67e-05 ; largest 1.07e-02 ; r.m.s. 1.25e-03 ; per phase bin largest 8.83e-04 ; per channel largest 8.26e-03
+   its rates through our likelihood: -32552.616920 (its own likelihood gave -32552.616920)
+   at its 1 points near the star: public minus ours converged: mean +0.2586, largest 0.2586
+   its time per likelihood evaluation, a different star each time: fastest 0.1002 s, median 0.1002 s over 1 evaluations
+   ours in Python, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; fastest 4.42 ms, median 5.30 ms over 5 evaluations ; public code's time / ours: fastest 23, median 19
+   ours in Python, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; fastest 3.42 ms, median 3.88 ms over 5 evaluations ; public code's time / ours: fastest 29, median 26
+   ours compiled, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; 0.661 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 152, its median 152
+   ours compiled, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; 0.444 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 226, its median 226
+
+public code at sqrt_num_cells 32, leaves 64, rays 2048, energies 64 (version 3.5.0b1), quick check:
+   at the star: -32552.616926 ; minus its shipped value -0.000021 ; minus ours converged +0.093437
+   bins (its rates through its own phase step, against ours converged): total -8.67e-05 ; largest 1.07e-02 ; r.m.s. 1.25e-03 ; per phase bin largest 8.83e-04 ; per channel largest 8.26e-03
+   its rates through our likelihood: -32552.616926 (its own likelihood gave -32552.616926)
+   at its 1 points near the star: public minus ours converged: mean +0.2586, largest 0.2586
+   its time per likelihood evaluation, a different star each time: fastest 0.1983 s, median 0.1983 s over 1 evaluations
+   ours in Python, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; fastest 6.19 ms, median 6.40 ms over 5 evaluations ; public code's time / ours: fastest 32, median 31
+   ours in Python, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; fastest 5.11 ms, median 6.83 ms over 5 evaluations ; public code's time / ours: fastest 39, median 29
+   ours compiled, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; 0.651 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 304, its median 304
+   ours compiled, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; 0.450 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 440, its median 440
+
+public code at sqrt_num_cells 64, leaves 128, rays 512, energies 384 (version 3.5.0b1), quick check:
+   at the star: -32552.681419 ; minus its shipped value -0.064514 ; minus ours converged +0.028944
+   bins (its rates through its own phase step, against ours converged): total +5.02e-06 ; largest 1.12e-03 ; r.m.s. 1.37e-04 ; per phase bin largest 2.73e-04 ; per channel largest 1.05e-03
+   its rates through our likelihood: -32552.681419 (its own likelihood gave -32552.681419)
+   at its 1 points near the star: public minus ours converged: mean +0.0616, largest 0.0616
+   its time per likelihood evaluation, a different star each time: fastest 2.6425 s, median 2.6425 s over 1 evaluations
+   ours in Python, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; fastest 4.46 ms, median 4.77 ms over 5 evaluations ; public code's time / ours: fastest 592, median 554
+   ours in Python, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; fastest 3.38 ms, median 3.64 ms over 5 evaluations ; public code's time / ours: fastest 783, median 726
+   ours compiled, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; 0.608 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 4345, its median 4345
+   ours compiled, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; 0.419 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 6313, its median 6313
+
+public code at sqrt_num_cells 128, leaves 256, rays 512, energies 384 (version 3.5.0b1), quick check:
+   at the star: -32552.697165 ; minus its shipped value -0.080260 ; minus ours converged +0.013198
+   bins (its rates through its own phase step, against ours converged): total -4.83e-07 ; largest 1.11e-03 ; r.m.s. 7.61e-05 ; per phase bin largest 7.71e-05 ; per channel largest 1.05e-03
+   its rates through our likelihood: -32552.697165 (its own likelihood gave -32552.697165)
+   at its 1 points near the star: public minus ours converged: mean +0.0222, largest 0.0222
+   its time per likelihood evaluation, a different star each time: fastest 19.7378 s, median 19.7378 s over 1 evaluations
+   ours in Python, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; fastest 4.71 ms, median 5.49 ms over 5 evaluations ; public code's time / ours: fastest 4193, median 3592
+   ours in Python, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; fastest 3.57 ms, median 3.67 ms over 5 evaluations ; public code's time / ours: fastest 5535, median 5385
+   ours compiled, 10 rings per panel, 16 points, 24 energies: largest difference from ours converged 0.0111 ; 0.618 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 31933, its median 31933
+   ours compiled, 8 rings per panel, 12 points, 16 energies: largest difference from ours converged 0.0723 ; 0.421 ms per evaluation (mean over 300 different stars, fastest of 7 rounds) ; public code's time / ours: its fastest 46872, its median 46872
+
+=== the second check: ours, converged, at its star: -47874.759952 ; the public code's shipped value -47881.278177 ; ours minus shipped +6.518225
+
+public code at sqrt_num_cells 32, leaves 64, rays 512, energies 192 (version 3.5.0b1), second check:
+   at the star: -47883.896815 ; minus its shipped value -2.618638 ; minus ours converged -9.136863
+   bins (its rates through its own phase step, against ours converged): total +1.52e-05 ; largest 2.00e-03 ; r.m.s. 3.18e-04 ; per phase bin largest 6.39e-04 ; per channel largest 1.69e-03
+   its rates through our likelihood: -47883.896815 (its own likelihood gave -47883.896815)
+   at its 1 points near the star: public minus ours converged: mean -8.1551, largest 8.1551
+
+public code at sqrt_num_cells 32, leaves 64, rays 512, energies 256 (version 3.5.0b1), second check:
+   at the star: -47884.813662 ; minus its shipped value -3.535486 ; minus ours converged -10.053711
+   bins (its rates through its own phase step, against ours converged): total +1.93e-05 ; largest 1.25e-03 ; r.m.s. 3.03e-04 ; per phase bin largest 6.44e-04 ; per channel largest 1.06e-03
+   its rates through our likelihood: -47884.813662 (its own likelihood gave -47884.813662)
+   at its 1 points near the star: public minus ours converged: mean -9.0727, largest 9.0727
+
+public code at sqrt_num_cells 32, leaves 64, rays 512, energies 384 (version 3.5.0b1), second check:
+   at the star: -47885.489055 ; minus its shipped value -4.210878 ; minus ours converged -10.729103
+   bins (its rates through its own phase step, against ours converged): total +2.23e-05 ; largest 8.13e-04 ; r.m.s. 2.96e-04 ; per phase bin largest 6.47e-04 ; per channel largest 6.75e-04
+   its rates through our likelihood: -47885.489055 (its own likelihood gave -47885.489055)
+   at its 1 points near the star: public minus ours converged: mean -9.7486, largest 9.7486
+
+public code at sqrt_num_cells 32, leaves 64, rays 512, energies 512 (version 3.5.0b1), second check:
+   at the star: -47885.725999 ; minus its shipped value -4.447822 ; minus ours converged -10.966048
+   bins (its rates through its own phase step, against ours converged): total +2.34e-05 ; largest 6.65e-04 ; r.m.s. 2.95e-04 ; per phase bin largest 6.48e-04 ; per channel largest 4.82e-04
+   its rates through our likelihood: -47885.725999 (its own likelihood gave -47885.725999)
+   at its 1 points near the star: public minus ours converged: mean -9.9857, largest 9.9857
+
+public code at sqrt_num_cells 32, leaves 128, rays 512, energies 128 (version 3.5.0b1), second check:
+   at the star: -47880.217465 ; minus its shipped value +1.060712 ; minus ours converged -5.457513
+   bins (its rates through its own phase step, against ours converged): total -3.36e-06 ; largest 2.96e-03 ; r.m.s. 3.73e-04 ; per phase bin largest 6.61e-04 ; per channel largest 2.51e-03
+   its rates through our likelihood: -47880.217465 (its own likelihood gave -47880.217465)
+   at its 1 points near the star: public minus ours converged: mean -5.7098, largest 5.7098
+
+public code at sqrt_num_cells 32, leaves 256, rays 512, energies 128 (version 3.5.0b1), second check:
+   at the star: -47880.154356 ; minus its shipped value +1.123820 ; minus ours converged -5.394405
+   bins (its rates through its own phase step, against ours converged): total -3.69e-06 ; largest 2.96e-03 ; r.m.s. 3.72e-04 ; per phase bin largest 6.39e-04 ; per channel largest 2.51e-03
+   its rates through our likelihood: -47880.154356 (its own likelihood gave -47880.154356)
+   at its 1 points near the star: public minus ours converged: mean -5.1761, largest 5.1761
+
+public code at sqrt_num_cells 64, leaves 64, rays 512, energies 128 (version 3.5.0b1), second check:
+   at the star: -47874.218204 ; minus its shipped value +7.059973 ; minus ours converged +0.541748
+   bins (its rates through its own phase step, against ours converged): total -8.52e-06 ; largest 3.00e-03 ; r.m.s. 2.73e-04 ; per phase bin largest 1.94e-04 ; per channel largest 2.51e-03
+   its rates through our likelihood: -47874.218204 (its own likelihood gave -47874.218204)
+   at its 1 points near the star: public minus ours converged: mean +1.2904, largest 1.2904
+
+public code at sqrt_num_cells 128, leaves 64, rays 512, energies 128 (version 3.5.0b1), second check:
+   at the star: -47871.962615 ; minus its shipped value +9.315562 ; minus ours converged +2.797337
+   bins (its rates through its own phase step, against ours converged): total -1.32e-05 ; largest 3.03e-03 ; r.m.s. 2.62e-04 ; per phase bin largest 9.59e-05 ; per channel largest 2.52e-03
+   its rates through our likelihood: -47871.962615 (its own likelihood gave -47871.962615)
+   at its 1 points near the star: public minus ours converged: mean +2.5532, largest 2.5532
+
+public code at sqrt_num_cells 32, leaves 64, rays 1024, energies 128 (version 3.5.0b1), second check:
+   at the star: -47881.274054 ; minus its shipped value +0.004123 ; minus ours converged -6.514102
+   bins (its rates through its own phase step, against ours converged): total +3.16e-06 ; largest 2.96e-03 ; r.m.s. 3.80e-04 ; per phase bin largest 6.27e-04 ; per channel largest 2.50e-03
+   its rates through our likelihood: -47881.274054 (its own likelihood gave -47881.274054)
+   at its 1 points near the star: public minus ours converged: mean -5.5328, largest 5.5328
+
+public code at sqrt_num_cells 32, leaves 64, rays 2048, energies 128 (version 3.5.0b1), second check:
+   at the star: -47881.273889 ; minus its shipped value +0.004288 ; minus ours converged -6.513937
+   bins (its rates through its own phase step, against ours converged): total +3.16e-06 ; largest 2.96e-03 ; r.m.s. 3.80e-04 ; per phase bin largest 6.27e-04 ; per channel largest 2.50e-03
+   its rates through our likelihood: -47881.273889 (its own likelihood gave -47881.273889)
+   at its 1 points near the star: public minus ours converged: mean -5.5330, largest 5.5330
+
+public code at sqrt_num_cells 64, leaves 128, rays 512, energies 384 (version 3.5.0b1), second check:
+   at the star: -47877.118168 ; minus its shipped value +4.160008 ; minus ours converged -2.358217
+   bins (its rates through its own phase step, against ours converged): total +3.37e-06 ; largest 8.16e-04 ; r.m.s. 8.79e-05 ; per phase bin largest 1.72e-04 ; per channel largest 6.93e-04
+   its rates through our likelihood: -47877.118168 (its own likelihood gave -47877.118168)
+   at its 1 points near the star: public minus ours converged: mean -2.1735, largest 2.1735
+
+public code at sqrt_num_cells 128, leaves 256, rays 512, energies 384 (version 3.5.0b1), second check:
+   at the star: -47874.997141 ; minus its shipped value +6.281036 ; minus ours converged -0.237189
+   bins (its rates through its own phase step, against ours converged): total -8.46e-07 ; largest 8.29e-04 ; r.m.s. 4.99e-05 ; per phase bin largest 4.54e-05 ; per channel largest 6.97e-04
+   its rates through our likelihood: -47874.997141 (its own likelihood gave -47874.997141)
+   at its 1 points near the star: public minus ours converged: mean -0.2141, largest 0.2141

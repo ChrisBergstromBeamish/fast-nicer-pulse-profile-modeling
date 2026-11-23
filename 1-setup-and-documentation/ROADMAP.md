@@ -12,6 +12,6 @@ One sprint at a time. A sprint starts only when the one before it is accepted.
    measured so far has built-in Intel Arc 140V graphics and no NVIDIA card), written so that others can port it to their
    own cards.
 
-Later, in an order still to be decided: the public code's time measured on the same machine; a tabulated hot-gas
-(atmosphere) spectrum in place of the blackbody; the second path of light around very compact stars; rings visible
-in two pieces.
+Later, in an order still to be decided: the public code's time measured on the same machine (done on 23 November 2026:
+`PUBLIC_CODES.md`, section 1.3); a tabulated hot-gas (atmosphere) spectrum in place of the blackbody; the second path
+of light around very compact stars; rings visible in two pieces.
