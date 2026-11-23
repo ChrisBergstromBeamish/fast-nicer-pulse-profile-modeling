@@ -7,8 +7,8 @@ you like.
 ## 1. What is needed
 
 - **The Python solution:** Python 3.12 and NumPy. Nothing else. (Written and checked with Python 3.12.10 and NumPy 2.5.4.)
-- **The compiled solution:** a C compiler (C99) with the standard C and math libraries, and GNU make. Built and checked with
-  gcc 13.3 on Ubuntu 24.04. On Windows the compiled solution is built and run on the Linux side, in a distribution under WSL
+- **The compiled solution:** a C compiler (C99) with the standard C and math libraries, and GNU make; the report of what was
+  built (`make depends`) uses the common Linux tools `file` and `ldd`. Built and checked with gcc 13.3 on Ubuntu 24.04. On Windows the compiled solution is built and run on the Linux side, in a distribution under WSL
   (Windows Subsystem for Linux); the Python solution runs on the Windows side. A Python with NumPy is needed once at build
   time, to write the compiled program's table file (section 5 says how the two sides find each other).
 
@@ -26,10 +26,11 @@ noted in `LICENCE_NOTES.md`).
    and put it anywhere. X-PSI is not installed, not built and not run by anything here.
 2. **The agreed reference curves and tables of Bogdanov et al. 2019**, "Constraining the Neutron Star Mass-Radius Relation
    and Dense Matter Equation of State with NICER. II. Emission from Hot Spots on a Rapidly Rotating Neutron Star",
-   Astrophysical Journal Letters 887, L26 (article identifier ab5968; DOI 10.3847/2041-8213/ab5968). The journal distributes
-   the article's supplementary data as the file set `apjlab5968`, an archive (its `ReadMe` calls it "the tar.gz file") of
-   24 text files and the `ReadMe`. Unpack it; the 24 files (`SD1a_test_IM.txt` to `OS1l_test_GSFCS.txt` and the two `_CU`
-   tables) must lie directly in one folder, and that folder may be anywhere.
+   Astrophysical Journal Letters 887, L26 (article identifier ab5968; DOI 10.3847/2041-8213/ab5968). The journal offers the
+   article's supplementary data on the article's own page, which the DOI leads to, as the file set `apjlab5968`: an archive
+   (its `ReadMe` calls it "the tar.gz file") of 24 text files and the `ReadMe`. That page is the only address the sources
+   give; the `ReadMe` prints none. Unpack the archive; the 24 files (`SD1a_test_IM.txt` to `OS1l_test_GSFCS.txt` and the two
+   `_CU` tables) must lie directly in one folder, and that folder may be anywhere.
 
 ## 3. Tell the programs where the reference material is
 

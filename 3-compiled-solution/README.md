@@ -19,9 +19,10 @@ of that processor, so a built program runs on that machine and on others with th
 rebuilt (one `make`) for any other. Found with `make depends`, which runs `file` and `ldd` on the two programs, on the
 machine the work was done on (Ubuntu 24.04 under WSL, gcc 13.3, a 64-bit Intel processor):
 
-- `file`: each form is an "ELF 64-bit LSB pie executable, x86-64 ... dynamically linked, interpreter
-  /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0": a 64-bit Linux program for Intel/AMD processors that loads shared
-  libraries at start.
+- `file`: each form is an "ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter
+  /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=..., for GNU/Linux 3.2.0, ..., not stripped": a 64-bit Linux program for
+  Intel/AMD processors that loads shared libraries at start. For `nicer_fast` the line also says "with debug_info", for
+  `nicer_fast_strict` it does not; neither is built with `-g`, and the difference was not traced further.
 - `ldd nicer_fast` (the compiler's fast arithmetic): `libm.so.6` (the C math library), `libmvec.so.1` (the C library's
   vector math library: with `-ffast-math` the compiler calls its vectorised sin, cos, exp and log), `libc.so.6` (the C
   library), `/lib64/ld-linux-x86-64.so.2` (the dynamic loader) and `linux-vdso.so.1` (the kernel's own, not a file).
