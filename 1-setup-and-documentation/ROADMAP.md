@@ -8,8 +8,9 @@ One sprint at a time. A sprint starts only when the one before it is accepted.
 2. **The compiled solution in parallel on a processor's cores.** Many stars worked out at once (a sampler asks for
    many at a time). Measured on the laptop's cores against the one-core time, with the same numbers as the Python
    solution.
-3. **The compiled solution on a graphics card.** Needs a decision on the card and its programming interface, and a
-   machine with that card to measure on.
+3. **The compiled solution on a graphics card.** The target is the graphics hardware of the author's own laptops (the one
+   measured so far has built-in Intel Arc 140V graphics and no NVIDIA card), written so that others can port it to their
+   own cards.
 
 Later, in an order still to be decided: the public code's time measured on the same machine; a tabulated hot-gas
 (atmosphere) spectrum in place of the blackbody; the second path of light around very compact stars; rings visible

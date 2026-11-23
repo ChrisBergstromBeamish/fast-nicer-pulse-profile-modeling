@@ -66,7 +66,7 @@ changes between workings-out), then builds the program in two forms, `nicer_fast
 timed so far) and `nicer_fast_strict` (strict arithmetic). To write the table file, `make` uses the first of `python3`,
 `python` and `python.exe` that can import NumPy; on a Windows machine whose Linux side has no NumPy, `python.exe` is the
 Windows Python, which WSL can run. If none is found, name one: `make PYTHON=/path/to/python`. `make depends` prints what each
-built program is and which libraries it loads (`3-compiled-solution/README.md` records the answer).
+built program is and which libraries it loads (`3-compiled-solution/README.md` states the answer).
 
 Then, from the repository's top, on the side that has Python with NumPy:
 
