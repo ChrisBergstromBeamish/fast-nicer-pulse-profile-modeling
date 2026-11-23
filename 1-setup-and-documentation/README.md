@@ -11,6 +11,9 @@ put them where you like. (Only the install script of the comparison with the pub
   built (`make depends`) uses the common Linux tools `file` and `ldd`. Built and checked with gcc 13.3 on Ubuntu 24.04. On Windows the compiled solution is built and run on the Linux side, in a distribution under WSL
   (Windows Subsystem for Linux); the Python solution runs on the Windows side. A Python with NumPy is needed once at build
   time, to write the compiled program's table file (section 5 says how the two sides find each other).
+  The batch mode (many stars at once) uses OpenMP, which gcc provides (`-fopenmp`, its library `libgomp`); its checks also
+  need, on the Linux side, a `python3` with only its standard library, and gcc's race detector library (`libtsan`) with
+  the tool `setarch`. All of these came with Ubuntu 24.04 and its gcc 13.3 package on the machine this was written on.
 
 ## 2. The public reference material
 
@@ -66,7 +69,9 @@ On the Linux side, in the folder `3-compiled-solution`:
 
 This writes the table file `tables.bin` (the Python solution writes it: everything the compiled program needs that never
 changes between workings-out), then builds the program in two forms, `nicer_fast` (the compiler's fast arithmetic, the form
-timed so far) and `nicer_fast_strict` (strict arithmetic). To write the table file, `make` uses the first of `python3`,
+timed so far) and `nicer_fast_strict` (strict arithmetic), both able to work out many stars at once on several threads
+(the batch mode); `nicer_fast_no_openmp`, the fast form built without OpenMP, which does the same on one thread; and
+`libnicer_fast.so`, the fast form as a library for Python (`3-compiled-solution/README.md`). To write the table file, `make` uses the first of `python3`,
 `python` and `python.exe` that can import NumPy; on a Windows machine whose Linux side has no NumPy, `python.exe` is the
 Windows Python, which WSL can run. If none is found, name one: `make PYTHON=/path/to/python`. `make depends` prints what each
 built program is and which libraries it loads (`3-compiled-solution/README.md` states the answer).
@@ -76,8 +81,10 @@ Then, from the repository's top, on the side that has Python with NumPy:
     python -I -B -X utf8 3-compiled-solution/check.py
 
 It compares both forms with the Python solution (the quick example, six stars at three settings, sixty random stars, 247 hard
-made-up channels) and ends with a line that begins `16 checks: 16 hold, 0 fail`, in under a minute. The exit code is 0 when
-every check holds, and 2 if a program is not built.
+made-up channels: sixteen checks), then checks the batch mode against the program itself: each form, and the form without
+OpenMP, gives every star in a batch exactly the bits it gets alone, on 1 to 8 threads; the library gives the batch mode's
+lines; and `make race` (which it runs) finds no race. It ends with a line that begins `24 checks: 24 hold, 0 fail`, in
+about a minute. The exit code is 0 when every check holds, and 2 if a program is not built.
 
 **Windows notes.** Open the Linux side with `wsl.exe -d <distribution>`; a Windows folder `C:\a\b` is `/mnt/c/a/b` there.
 The Python check commands run on the Windows side and call the compiled program through `wsl.exe` themselves. If `make`

@@ -98,6 +98,22 @@ are used as the example's inputs").
   defines its star so, and the derivation of light's path, the delay and the energy shifts does not use them (see
   `DERIVATION.md`). Nothing of ours rests on them.
 
+### 1.5 In parallel: many stars at once
+
+**In plain words.** The compiled program can work out many stars at the same time, one star on each processor core, and
+each star comes out exactly as it does alone. One star is still worked out on one core.
+
+"In parallel" here means only this: the batch mode of `nicer_fast` and `nicer_fast_strict`, and the library
+`libnicer_fast.so`, work out many stars at once, one star per thread at any moment (threads are lines of work of one
+program, each on a core; OpenMP, a feature of the compiler, hands the stars to them). For every star, ln L, the code and
+every bin count come out the same, bit for bit, as when that star is worked out alone, on any number of threads and in any
+order of the stars (`3-compiled-solution/check.py`; `3-compiled-solution/README.md`). It does not cover: parallel work inside
+one star (the rings of one spot are worked out one after another); several stars inside one thread with the processor's
+vector instructions; the Python solution, which works on one star at a time on one core; a graphics card; a build for
+the Windows side (the compiled solution is built and run on the Linux side); and machines other than the one laptop on
+which it was measured (`CLAIMS.md`, group I). The time on several cores is measured for our program only; X-PSI's time on
+several threads is not measured, so no ratio against X-PSI is stated for more than one core.
+
 ## 2. Where the programs refuse, and how
 
 **In plain words.** Where a star is outside what the programs cover, or where light could reach the observer by two paths,
@@ -310,6 +326,9 @@ that edge, with the reason it was left there.
   5 to 8 ms, and the compiled copy 0.9 to 1.1 ms for the whole working-out, on 22 November 2026 (`CLAIMS.md`, row F6, has
   the slower repeat of 23 November); its values there equal the Python's to 1e-8. Fixed points for that case are not built.
 - **Several hot spots, or shapes other than a circle.** `spot_counts` works out one circular spot per call.
+- **Parallel work inside one star, several stars per thread with vector instructions, a graphics card.** Section 1.5: the
+  compiled program works out many stars at once, one per thread; nothing else is built in parallel. The graphics card is
+  the roadmap's next item.
 - **Listed in the fourth review as not acted on, with the reasons given there** ("listed here so that they are not
   forgotten"):
   - exact handling of a ray that leaves exactly radially or exactly along the surface in the integrals (the approximation

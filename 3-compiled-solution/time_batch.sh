@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# Times the batch mode of nicer_fast (the fast form) on many stars at once, on 1, 2, 4, 6 and 8 threads. In this folder, on the
+# Linux side, after make:   bash time_batch.sh
+# 1. 4,096 stars drawn from the public example's prior (draw_stars.py, seed 1), at the settings (10 rings per panel, 16 points,
+#    24 energies) and (8, 12, 16): five repeats per thread count; stars per second, the fastest and the median of the five, the
+#    speed-up over one thread and that speed-up divided by the number of threads.
+# 2. The batch mode on one thread against the program's own one-at-a-time timing (a negative number of repeats): the same 2,800
+#    stars (the 7 blocks of 400 that mode works out, written to a file by the awk below), time per star.
+# 3. What limits the speed-up: one thread held on each processor in turn, and four threads held on processors 0 to 3 and then 4
+#    to 7 (taskset), at (10, 16, 24), on the first 1,024 of the 4,096 stars.
+# The power state is read from the Windows side before and after each part, and after each timed line (2 = mains, 1 = battery;
+# "unknown" off Windows).
+# The time of a batch is the program's own (the stars only: not the start of the program or the loading of the tables).
+cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
+PYTHON3=${PYTHON3:-python3}
+REPEATS=5
+power() { local s; s=$(powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Battery).BatteryStatus" 2>/dev/null | tr -d '\r'); echo "power state ${s:-unknown} ($(date '+%Y-%m-%d %H:%M:%S %Z'))"; }
+state() { local s; s=$(powershell.exe -NoProfile -Command "(Get-CimInstance Win32_Battery).BatteryStatus" 2>/dev/null | tr -d '\r'); echo "power ${s:-unknown} $(date '+%H:%M:%S')"; }
+# five repeats of one batch: prints "fastest median" in stars per second; the arguments are the command before the stars file
+repeat_batch() {
+  local stars=$1; shift
+  for r in $(seq $REPEATS); do "$@" "$stars" 2>&1 >/dev/null | sed -n 's/.* \([0-9.]*\) stars per second$/\1/p'; done |
+    sort -g | awk '{v[NR] = $1} END {printf "%.1f %.1f\n", v[NR], (NR % 2 ? v[(NR + 1) / 2] : 0.5 * (v[NR / 2] + v[NR / 2 + 1]))}'
+}
+echo "machine:$(grep -m1 'model name' /proc/cpuinfo | cut -d: -f2) ; processors: $(nproc) ; compiler: $(gcc --version | head -n 1)"
+[ -x nicer_fast ] && [ -f tables.bin ] || { echo "run make first"; exit 2; }
+"$PYTHON3" -I -B draw_stars.py 1 4096 stars_timing.txt
+echo "== 1. 4096 stars, the fast form, $REPEATS repeats each: stars per second, fastest and median ; speed-up (by the fastest) ; speed-up / threads"
+power
+for s in "10 16 24" "8 12 16"; do
+  ./nicer_fast tables.bin batch $s 1 stars_timing.txt > batch_timing_out.txt 2>/dev/null
+  echo "setting (rings per panel, points, energies) = ($s): refused $(awk '$2 != 0' batch_timing_out.txt | wc -l) of $(wc -l < batch_timing_out.txt), early exit (ln L = -inf) $(awk '$1 == "-inf" && $2 == 0' batch_timing_out.txt | wc -l)"
+  one=""
+  for th in 1 2 4 6 8; do
+    read -r fast med < <(repeat_batch stars_timing.txt ./nicer_fast tables.bin batch $s $th)
+    [ -z "$one" ] && one=$fast
+    echo "  threads $th: $fast fastest, $med median ; speed-up $(awk -v a=$fast -v b=$one 'BEGIN {printf "%.2f", a / b}') ; per thread $(awk -v a=$fast -v b=$one -v t=$th 'BEGIN {printf "%.2f", a / b / t}') ; $(state)"
+  done
+done
+power
+echo "== 2. the batch mode on one thread against the one-at-a-time timing (the same 2800 stars), time per star"
+power
+for s in "10 16 24" "8 12 16"; do
+  awk 'BEGIN {split("1.4 12 1.0 0.5000000000000001 0.0 1.2217304763960306 0.75 6.7", p, " ");
+              for (k = 0; k < 7; k++) for (i = 0; i < 400; i++) { line = "";
+                for (m = 0; m < 8; m++) { q = (m == 4) ? 1.0e-3 * sin(0.9 * i + k) : p[m + 1] * (1.0 + 1.0e-3 * sin(1.7 * i + 2.3 * m + 0.4 * k));
+                  line = line sprintf("%.17g ", q) } print line } }' > stars_one_at_a_time.txt
+  read -r fast med < <(repeat_batch stars_one_at_a_time.txt ./nicer_fast tables.bin batch $s 1)
+  echo "  ($s) batch on one thread, 2800 stars, $REPEATS repeats: $(awk -v f=$fast 'BEGIN {printf "%.4f", 1000 / f}') ms per star fastest, $(awk -v f=$med 'BEGIN {printf "%.4f", 1000 / f}') ms median ; $(state)"
+  for r in $(seq $REPEATS); do
+    echo "  ($s) one at a time: $(./nicer_fast tables.bin $s -400 1.4 12 1.0 0.5000000000000001 0.0 1.2217304763960306 0.75 6.7 | grep 'time per' | cut -d';' -f1); $(state)"
+  done
+done
+power
+echo "== 3. what limits the speed-up, at (10, 16, 24), the first 1024 of the stars, $REPEATS repeats: stars per second, fastest and median"
+power
+head -n 1024 stars_timing.txt > stars_timing_1024.txt
+for cpu in 0 1 2 3 4 5 6 7; do
+  read -r fast med < <(repeat_batch stars_timing_1024.txt taskset -c $cpu ./nicer_fast tables.bin batch 10 16 24 1)
+  echo "  one thread held on processor $cpu: $fast fastest, $med median ; $(state)"
+done
+for cpus in 0-3 4-7; do
+  read -r fast med < <(repeat_batch stars_timing_1024.txt taskset -c $cpus ./nicer_fast tables.bin batch 10 16 24 4)
+  echo "  four threads held on processors $cpus: $fast fastest, $med median ; $(state)"
+done
+power
+rm -f batch_timing_out.txt stars_one_at_a_time.txt stars_timing_1024.txt
