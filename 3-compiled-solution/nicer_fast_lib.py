@@ -6,7 +6,8 @@ library only (ctypes), so that a sampler written in Python can ask for many star
     lnl, codes = lib.work_out(stars, threads=8)                   # stars: a list of stars, each eight numbers
 
 The eight numbers of a star and the meaning of the values and codes are those of the program's batch mode (README.md):
--1e300 stands for minus infinity (the public code's early exit, or a refused star, whose code is not 0).
+-1e300 stands for minus infinity (the public code's early exit, or a refused star, whose code is not 0). The tables and
+the settings belong to the process, not to one Batch: the last Batch made, or the last choose, sets them for all.
 
 usage as a command: python3 -I -B nicer_fast_lib.py <tables> <rings per panel> <points> <energies> <threads> <stars file>
 prints one line per star exactly as the program's batch mode prints it (check.py compares the two)."""
@@ -25,7 +26,7 @@ class Batch:
         self.lib.nicer_choose.restype = None
         self.lib.nicer_batch.argtypes = [ctypes.c_int, ctypes.POINTER(ctypes.c_double), ctypes.c_int, ctypes.POINTER(ctypes.c_double),
                                          ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_double)]
-        self.lib.nicer_load(os.fsencode(tables))       # once per process: a second call would load the tables again
+        self.lib.nicer_load(os.fsencode(tables))       # once per process: a second Batch keeps the tables of the first
         self.lib.nicer_choose(npp, n, nE)
 
     def choose(self, npp, n, nE):

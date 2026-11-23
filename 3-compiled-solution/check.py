@@ -183,6 +183,8 @@ for program in forms:
             else:
                 expected.append((float.fromhex(line[0]), "0", alone_bin[k0 * size:(k0 + 1) * size]))
                 k0 += 1
+        print("      %s at %s, %d stars (%s): refused %d, early exit (ln L = -inf) %d" % (program, s, n, name,
+              sum(1 for e in expected if e[1] != "0"), sum(1 for e in expected if e[1] == "0" and e[0] < -1.0e299)))
         for tag, (lines, dump) in runs.items():
             for i in range(n):
                 j = int(np.where(order[name] == i)[0][0]) if tag.startswith("s") else i      # where star i stands in this run

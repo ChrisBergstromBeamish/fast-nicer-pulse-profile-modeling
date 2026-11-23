@@ -753,10 +753,11 @@ static double work_out(const double *p, double *S, double *star, int *code)
 }
 
 /* ---------------------------------------------------------------- many stars at once (also the shared library's three entry points) */
-/* Once, before any batch: the tables. A missing or bad file ends the process with a message, as in the program. */
+/* Once, before any batch: the tables. A missing or bad file ends the process with a message, as in the program. Once loaded,
+ * a second call does nothing (the tables of the first call stay). Returns the number of tables. */
 int nicer_load(const char *tables)
 {
-    load_tables(tables);
+    if (narr == 0) load_tables(tables);
     return narr;
 }
 
