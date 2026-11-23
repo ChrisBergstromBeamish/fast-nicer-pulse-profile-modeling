@@ -9,3 +9,9 @@ settings.cfg
 3-compiled-solution/*.out
 *.npz
 *.jsonl
+3-compiled-solution/nicer_fast_no_openmp
+3-compiled-solution/nicer_fast_race
+3-compiled-solution/libnicer_fast.so
+3-compiled-solution/stars_*.txt
+3-compiled-solution/race_out.txt
+3-compiled-solution/batch_check_out/

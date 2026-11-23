@@ -9,9 +9,12 @@
  * (see code/bend.py for the derivation). The star's flattened shape is the public example's input.
  *
  * usage: nicer_fast <tables> <rings per panel> <points> <energies> <repeats> mass radius distance cos_i phase_shift colat rho log10T [dump file]
- * build: gcc -O3 -march=native -ffast-math -o nicer_fast nicer_fast.c -lm
+ *        nicer_fast <tables> batch <rings per panel> <points> <energies> <threads> <stars file> [dump file]
+ * build: gcc -O3 -march=native -ffast-math -fopenmp -o nicer_fast nicer_fast.c -lm      (the Makefile builds every form)
  *        (the program holds no infinity and no not-a-number, so the compiler's fast arithmetic is safe for it)
  * A negative number of repeats times that many workings-out with a different star at each one (as a sampler asks).
+ * The batch mode works out many stars at once, one star per thread at any moment; nothing inside one star runs in parallel.
+ * Built with -DNICER_LIBRARY -fPIC -shared it is a library with the entry points nicer_load, nicer_choose and nicer_batch.
  */
 #include <math.h>
 #include <stdio.h>
@@ -309,7 +312,7 @@ static int solve(double (*f)(double, const EndCtx *), const EndCtx *e, double xa
 static int spot_counts(double mass, double Req_km, double nu_hz, double D_cm, double incl, double theta_s, double rho, double kT,
                        const double *edges_turns, double phase0, double *S)
 {
-    static double theta[MAXR], wth[MAXR], dlam[MAXR];
+    double theta[MAXR], wth[MAXR], dlam[MAXR];        /* on this call's own stack, so that threads never share them */
     double GM = mass * XGM * C_CM * C_CM, L = 2.0 * mass * XGM, Req = Req_km * 1.0e5, Om = TWO_PI * nu_hz;
     double o2 = (Om * Om * Req * Req * Req / GM) * (-0.788 + 1.030 * GM / (Req * C_CM * C_CM));
     double u_eq = L / Req, u_pole = L / (Req * (1.0 + o2)), u_min = fmin(u_eq, u_pole), u_max = fmax(u_eq, u_pole);
@@ -637,7 +640,6 @@ static double channel_reference(const double *d, const double *s, int n, double 
 }
 
 static const double *GQ[6], *WQ[6];
-static double *PER_CHANNEL = NULL;      /* if set, each channel's value is stored here (the test of hard channels) */
 static const int NQ[6] = {10, 14, 20, 28, 40, 64};
 static const double QLIM[6] = {0.5, 2.0, 8.0, 18.0, 45.0, 1e300};
 
@@ -649,8 +651,9 @@ static double lfun(double B, const double *d, const double *s, int n, double SCA
     return x - T * B - ssc;
 }
 
-/* star[r * NB + b]: the model's mean count rate in channel r and bin b. Returns the public code's log-likelihood. */
-static double marginal_loglike(const double *star)
+/* star[r * NB + b]: the model's mean count rate in channel r and bin b. Returns the public code's log-likelihood.
+ * PER_CHANNEL, if not NULL, gets each channel's value (the test of hard channels); it belongs to the caller. */
+static double marginal_loglike(const double *star, double *PER_CHANNEL)
 {
     const double DROP = 36.0, CUT_FALL = 32.0, T = T_EXP;
     double total = 0.0, SCALE = T / NB;
@@ -746,9 +749,72 @@ static double work_out(const double *p, double *S, double *star, int *code)
             star[r * NB + b] = x;
         }
     }
-    return marginal_loglike(star);
+    return marginal_loglike(star, NULL);
 }
 
+/* ---------------------------------------------------------------- many stars at once (also the shared library's three entry points) */
+/* Once, before any batch: the tables. A missing or bad file ends the process with a message, as in the program. */
+int nicer_load(const char *tables)
+{
+    load_tables(tables);
+    return narr;
+}
+
+/* Once, or again for another setting, before a batch: rings per panel, points, energies (and the likelihood's quadratures). */
+void nicer_choose(int npp, int n, int nE)
+{
+    int i;
+    choose(npp, n, nE);
+    for (i = 0; i < 6; i++) { GQ[i] = getn("gl_g", NQ[i])->v; WQ[i] = getn("gl_w", NQ[i])->v; }
+}
+
+/* The numbers each star's dump holds: the bin counts S (NB * NE), then the model's count rates (NCH * NB). */
+int nicer_dump_size(void)
+{
+    return NB * NE + NCH * NB;
+}
+
+/* nstar stars: p holds eight numbers per star (as on the command line), lnl and code get one value per star (a refused star
+ * gets its code and -1e300, as alone; its neighbours do not notice). bins, if not NULL, gets nicer_dump_size() numbers per star
+ * (zeros for a refused star). The tables and the settings are only read here; each thread works in memory of its own. With
+ * OpenMP (a compiler feature that shares a loop's turns among threads) the stars are handed out one at a time as threads
+ * become free; without it the same loop runs on one thread. Returns 0, or 1 if working memory could not be had (those stars
+ * get the code -9). */
+int nicer_batch(int nstar, const double *p, int threads, double *lnl, int *code, double *bins)
+{
+    int i, failed = 0, finished = 0;
+    size_t nS = (size_t)NB * NE, nR = (size_t)NCH * NB;
+#ifdef _OPENMP
+#pragma omp parallel num_threads(threads > 0 ? threads : 1)
+#endif
+    {
+        double *S = (double *)malloc(nS * sizeof(double)), *star = (double *)malloc(nR * sizeof(double));
+        int j, ok = S && star;
+#ifdef _OPENMP
+#pragma omp for schedule(dynamic, 1)
+#endif
+        for (j = 0; j < nstar; j++) {
+            if (!ok) { lnl[j] = HUGE_NEG; code[j] = -9; continue; }
+            lnl[j] = work_out(p + 8 * (size_t)j, S, star, &code[j]);
+            if (bins) {
+                double *o = bins + (size_t)j * (nS + nR);
+                if (code[j]) memset(o, 0, (nS + nR) * sizeof(double));
+                else { memcpy(o, S, nS * sizeof(double)); memcpy(o + nS, star, nR * sizeof(double)); }
+            }
+        }
+        free(S); free(star);
+        /* The OpenMP library's barrier at the end of this block already puts every thread's writes before what follows. The
+         * race detector (make race) cannot see that barrier, as the library is not built for it; this counter shows it the
+         * same order (each thread adds 1 after its writes, and the reading below waits for all of them). */
+        __atomic_fetch_add(&finished, 1, __ATOMIC_RELEASE);
+    }
+    __atomic_load_n(&finished, __ATOMIC_ACQUIRE);
+    for (i = 0; i < nstar; i++) if (code[i] == -9) failed = 1;
+    (void)threads;
+    return failed;
+}
+
+#ifndef NICER_LIBRARY
 static double now_s(void)
 {
     struct timespec ts;
@@ -758,9 +824,56 @@ static double now_s(void)
 
 int main(int argc, char **argv)
 {
-    static double S[MAXB * MAXE], star[NCHMAX * MAXB];
+    double *S = (double *)malloc(MAXB * MAXE * sizeof(double)), *star = (double *)malloc(NCHMAX * MAXB * sizeof(double));
     double p[8], v, best = 1e30, t0, tk = 0.0, tl = 0.0;
     int npp, n, nE, reps, i, k, code = 0, blocks = 7;
+    if (!S || !star) { fprintf(stderr, "no memory\n"); return 2; }
+    if (argc >= 8 && strcmp(argv[2], "batch") == 0) {
+        /* nicer_fast <tables> batch <rings per panel> <points> <energies> <threads> <stars file> [dump file]: the file holds one
+         * star per line (the eight numbers); one line per star is written: ln L to 17 significant digits (-inf for the public
+         * code's early exit and for a refused star), then the code (0, or the refusal's code). The dump file, if named, gets
+         * each star's bin counts and model rates, one star after another (zeros for a refused star). */
+        FILE *fh = fopen(argv[7], "r");
+        char line[4096];
+        int cap = 1024, ns = 0, threads = atoi(argv[6]), *codes, nline = 0;
+        double *ps = (double *)malloc((size_t)cap * 8 * sizeof(double)), *lnl, *bins = NULL;
+        if (!fh) { fprintf(stderr, "cannot open %s\n", argv[7]); return 2; }
+        if (threads < 1) { fprintf(stderr, "the number of threads must be 1 or more\n"); return 2; }
+        while (fgets(line, sizeof line, fh)) {
+            char *s = line, *end;
+            int m;
+            nline++;
+            while (*s == ' ' || *s == '\t') s++;
+            if (*s == '\n' || *s == '\r' || *s == 0) continue;
+            if (ns == cap) { cap *= 2; ps = (double *)realloc(ps, (size_t)cap * 8 * sizeof(double)); }
+            for (m = 0; m < 8; m++) {
+                ps[8 * (size_t)ns + m] = strtod(s, &end);
+                if (end == s) { fprintf(stderr, "%s, line %d: expected eight numbers\n", argv[7], nline); return 2; }
+                s = end;
+            }
+            ns++;
+        }
+        fclose(fh);
+#ifndef _OPENMP
+        if (threads > 1) fprintf(stderr, "built without OpenMP: the stars are worked out on one thread\n");
+#endif
+        nicer_load(argv[1]);
+        nicer_choose(atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
+        lnl = (double *)malloc((size_t)(ns > 0 ? ns : 1) * sizeof(double)); codes = (int *)malloc((size_t)(ns > 0 ? ns : 1) * sizeof(int));
+        if (argc > 8) bins = (double *)malloc((size_t)(ns > 0 ? ns : 1) * nicer_dump_size() * sizeof(double));
+        if (!lnl || !codes || (argc > 8 && !bins)) { fprintf(stderr, "no memory\n"); return 2; }
+        t0 = now_s();
+        if (nicer_batch(ns, ps, threads, lnl, codes, bins)) { fprintf(stderr, "no memory for a thread's working memory\n"); return 2; }
+        t0 = now_s() - t0;
+        for (i = 0; i < ns; i++) { if (lnl[i] < -1.0e299) printf("-inf %d\n", codes[i]); else printf("%.17g %d\n", lnl[i], codes[i]); }
+        if (bins) {
+            fh = fopen(argv[8], "wb");
+            fwrite(bins, sizeof(double), (size_t)ns * nicer_dump_size(), fh);
+            fclose(fh);
+        }
+        fprintf(stderr, "%d stars on %d threads: %.6f s, %.1f stars per second\n", ns, threads, t0, ns / t0);
+        return 0;
+    }
     if (argc == 4 && strcmp(argv[2], "channels") == 0) {
         /* nicer_fast <tables> channels <file>: the file holds int32 channels, int32 bins, float64 exposure, then counts,
          * model rates, limits (2 per channel) and factorial sums; each channel's log-likelihood is written to <file>.out */
@@ -776,8 +889,8 @@ int main(int argc, char **argv)
         fclose(fh);
         load_tables(argv[1]);
         for (i = 0; i < 6; i++) { GQ[i] = getn("gl_g", NQ[i])->v; WQ[i] = getn("gl_w", NQ[i])->v; }
-        NCH = nch; NB = nbin; T_EXP = T; COUNTS = cnt; SUPPORT = sup; FACT = fc; PER_CHANNEL = outv;
-        tot = marginal_loglike(st);
+        NCH = nch; NB = nbin; T_EXP = T; COUNTS = cnt; SUPPORT = sup; FACT = fc;
+        tot = marginal_loglike(st, outv);
         snprintf(name, sizeof name, "%s.out", argv[3]);
         fh = fopen(name, "wb");
         fwrite(outv, 8, (size_t)nch, fh);
@@ -789,8 +902,7 @@ int main(int argc, char **argv)
     load_tables(argv[1]);
     npp = atoi(argv[2]); n = atoi(argv[3]); nE = atoi(argv[4]); reps = atoi(argv[5]);
     for (i = 0; i < 8; i++) p[i] = atof(argv[6 + i]);
-    choose(npp, n, nE);
-    for (i = 0; i < 6; i++) { GQ[i] = getn("gl_g", NQ[i])->v; WQ[i] = getn("gl_w", NQ[i])->v; }
+    nicer_choose(npp, n, nE);
     if (getenv("NICER_NO_UPPER_LIMIT")) {          /* the second public check's setting: no upper limit on the background */
         double *sup = (double *)malloc(2 * (size_t)NCH * sizeof(double));
         for (i = 0; i < NCH; i++) { sup[2 * i] = 0.0; sup[2 * i + 1] = -1.0; }
@@ -799,6 +911,7 @@ int main(int argc, char **argv)
     v = work_out(p, S, star, &code);
     if (code) { printf("refused: code %d\n", code); return 1; }
     if (v < -1.0e299) printf("ln L = -inf\n"); else printf("ln L = %.9f\n", v);
+    printf("every bit of ln L: %a\n", v);              /* the same number, as a hexadecimal floating-point number */
     if (argc > 14) {
         FILE *fh = fopen(argv[14], "wb");
         fwrite(S, sizeof(double), (size_t)NB * NE, fh);
@@ -839,10 +952,11 @@ int main(int argc, char **argv)
             spot_counts(p[0], p[1], FREQ, p[2] * XKPC, acos(p[3]), p[5], p[6], XKB * pow(10.0, p[7]), edges, 0.5 - p[4], S); }
         tk = (now_s() - t0) / reps;
         t0 = now_s();
-        for (i = 0; i < reps; i++) v = marginal_loglike(star);
+        for (i = 0; i < reps; i++) v = marginal_loglike(star, NULL);
         tl = (now_s() - t0) / reps;
         printf("time per working-out: %.4f ms (fastest of %d blocks of %d) ; the star's bin counts %.4f ms ; the likelihood step %.4f ms\n",
                best * 1e3, blocks, reps, tk * 1e3, tl * 1e3);
     }
     return 0;
 }
+#endif

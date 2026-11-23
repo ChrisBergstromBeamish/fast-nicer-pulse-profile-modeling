@@ -61,3 +61,23 @@ the observer by a second path, `-3` if an end direction of a ring was not found;
 has the full list. `ln L = -inf` is the public code's own early exit (the model far above the data in some channel).
 
 Times measured on this machine are in `1-setup-and-documentation/CLAIMS.md`, each with the command that measured it.
+
+## What a working-out writes, and where
+
+Two workings-out that run at the same moment on two threads (two lines of work of one program, each on a core) must never
+write to the same memory. Every variable of `nicer_fast.c` that lives outside a function, or keeps its value between calls
+(`static`), is in this table: set once before any working-out and only read afterwards, or written during a working-out.
+
+| name | where | which kind | what was done |
+|---|---|---|---|
+| `arrs`, `narr` | file level | the tables: set once by `load_tables` (`nicer_load`) | kept; during a working-out only read (`get`, `getn`) |
+| `NU`, `NZ`, `ND`, `NVIS`, `NPP`, `NN`, `NE`, `NB`, `NCH` | file level | the settings: set once by `choose` (`nicer_choose`); the `channels` mode sets `NCH`, `NB` once in `main` | kept; only read |
+| `FIT_CT`, `FIT_CA`, `VUG`, `VT0`, `VT0X`, `VT0XX`, `GLG`, `GLW`, `CCOS`, `CSIN`, `CG`, `CQ0`, `CTOD`, `EN_E`, `EN_W`, `COUNTS`, `SUPPORT`, `FACT` | file level | pointers into the tables: set once by `choose`; `SUPPORT` also once by `main` (`NICER_NO_UPPER_LIMIT`), and the `channels` mode sets `COUNTS`, `SUPPORT`, `FACT` once | kept; only read |
+| `FIT_U0`, `FIT_U1`, `ZM`, `FIT_XMIN`, `FIT_TILT`, `C_CM`, `XGM`, `XKPC`, `XKB`, `XBB`, `T_EXP`, `FREQ` | file level | numbers from the tables: set once by `choose` (`T_EXP` by the `channels` mode) | kept; only read |
+| `GQ`, `WQ` | file level | the likelihood's quadratures: set once (`nicer_choose`; the `channels` mode) | kept; only read |
+| `NQ`, `QLIM` | file level | constants (`const`) | never written |
+| `PER_CHANNEL` | file level (a pointer) | the array it pointed to was written during a working-out (each channel's value, for the test of hard channels) | removed from file level: now an argument of `marginal_loglike`, owned by the caller (`NULL` in a working-out of a star) |
+| `theta`, `wth`, `dlam` | `static` inside `spot_counts` | written during every working-out (the rings of the spot) | moved to the function's own stack |
+| `S`, `star` | `static` inside `main` | written during every working-out of the single-star mode | now taken by `main` with `malloc`; in a batch each thread takes its own `S` and `star` |
+
+No other function keeps anything between calls. In a batch the tables and the settings are shared and only read.
