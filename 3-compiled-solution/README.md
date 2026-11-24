@@ -143,7 +143,8 @@ bin count of the dump and every bit of ln L. The forms built now give the same b
 threads (that comparison was made once, in a folder that is not kept; `check.py` repeats the part that compares the batch
 with each star alone).
 
-Times measured on this machine are in `1-setup-and-documentation/CLAIMS.md`, each with the command that measured it.
+Times measured on this machine are in `1-setup-and-documentation/CLAIMS.md`, each with the command that measured it. The
+batch mode's times on 1 to 8 threads (`time_batch.sh`) are its rows I1 to I7.
 
 ## What a working-out writes, and where
 

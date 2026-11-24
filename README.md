@@ -24,7 +24,7 @@ here only as the instrument whose kind of data this calculation serves.
 
 ## What is measured so far
 
-One processor core of a laptop (Intel Core Ultra 7 258V); every number below has a row in
+One processor core of a laptop (Intel Core Ultra 7 258V), unless a line says otherwise; every number below has a row in
 `1-setup-and-documentation/CLAIMS.md` with the command that reproduces it.
 
 - The likelihood of the public code X-PSI's shipped quick example: -32552.710 against its shipped -32552.617, where its
@@ -32,6 +32,12 @@ One processor core of a laptop (Intel Core Ultra 7 258V); every number below has
 - One working-out of that likelihood: 3.2 thousandths of a second in Python, 0.4 thousandths of a second compiled, as
   measured on 22 November 2026. A repeat on 23 November with the laptop on battery power gave 5.1 and 1.0 thousandths of
   a second with the same numbers out; on mains power again that day, 2.9 and 0.40. All are in the claims table.
+- Many stars at once, on all eight processors of the same laptop (sprint 2): the compiled program worked out 1,711 stars
+  per second at the working setting (10 rings per panel, 16 points, 24 energies; median 1,641), 4.7 times its 363 per
+  second on one thread, on batches of 4,096 different stars drawn from the public example's prior, fastest of five
+  repeats, on mains power on 23 November 2026; every star came out the same, bit for bit, as when it is worked out alone
+  (`CLAIMS.md`, rows I1 and J1). No ratio against X-PSI is stated for several cores: X-PSI's time on several threads is
+  not measured.
 - The public code X-PSI itself (version 3.5.0b1), installed in its own folder on the same laptop and run there on
   23 November 2026: its own tests pass, and at its shipped settings it gives its shipped values. Compiled, our program
   works out the quick example's likelihood more than 100 times faster than X-PSI at X-PSI's shipped settings, on one core
