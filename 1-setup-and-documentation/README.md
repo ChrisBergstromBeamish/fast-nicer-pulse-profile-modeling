@@ -11,8 +11,10 @@ put them where you like. (Only the install script of the comparison with the pub
   built (`make depends`) uses the common Linux tools `file` and `ldd`. Built and checked with gcc 13.3 on Ubuntu 24.04. On Windows the compiled solution is built and run on the Linux side, in a distribution under WSL
   (Windows Subsystem for Linux); the Python solution runs on the Windows side. A Python with NumPy is needed once at build
   time, to write the compiled program's table file (section 5 says how the two sides find each other).
-  The batch mode (many stars at once) uses OpenMP, which gcc provides (`-fopenmp`, its library `libgomp`); its checks also
-  need, on the Linux side, a `python3` with only its standard library, and gcc's race detector library (`libtsan`) with
+  The batch mode (many stars at once, on several threads: lines of work of one program, each on a processor core) uses
+  OpenMP, a feature of the compiler that shares the turns of a loop among threads, which gcc provides (`-fopenmp`, its
+  library `libgomp`); its checks also need, on the Linux side, a `python3` with only its standard library, and gcc's race
+  detector library (`libtsan`; a race is two threads touching the same memory with nothing to order them) with
   the tool `setarch`. All of these came with Ubuntu 24.04 and its gcc 13.3 package on the machine this was written on.
 
 ## 2. The public reference material

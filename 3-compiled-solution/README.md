@@ -3,6 +3,15 @@
 The fast program and the public likelihood's definition, written out again in C, in one file. The Python solution is the
 reference; this folder's program is checked against it bin by bin (`check.py`). Nothing of the public code X-PSI is in it.
 
+Three terms of the trade used below: a thread is one line of work of a program, each on a processor core, so that several
+run at the same moment; OpenMP is a feature of the compiler that shares the turns of a loop among threads; a race is two
+threads touching the same memory with nothing to put one before the other.
+
+**To build**, on the Linux side, in this folder: `make` (it writes `tables.bin` with a Python that has NumPy, then builds
+the four forms below; the setup page, `1-setup-and-documentation/README.md`, section 5, says what it needs and how it
+finds that Python). `make race` builds and runs the race detector's form, `make depends` reports what was built, and
+`make clean` removes it all. Then `check.py` runs every check, from the repository's top.
+
 | file | what it is |
 |---|---|
 | `nicer_fast.c` | the Python program written out again in C: the star's bin counts (`2-python-solution/code/fast_kernel.py`, `spot_counts`, with the approximation of the path integrals) and the public likelihood's definition (`2-python-solution/code/public_likelihood.py`) |
@@ -18,12 +27,12 @@ reference; this folder's program is checked against it bin by bin (`check.py`). 
 
 ## What it is compiled into, and what it needs to run
 
-Both forms are native programs for the processor they are built on: `-march=native` lets the compiler use every instruction
+All built forms are native code for the processor they are built on: `-march=native` lets the compiler use every instruction
 of that processor, so a built program runs on that machine and on others with the same instruction extensions, and is
 rebuilt (one `make`) for any other. Found with `make depends`, which runs `file` and `ldd` on the four built forms, on the
 machine the work was done on (Ubuntu 24.04 under WSL, gcc 13.3, a 64-bit Intel processor):
 
-- `file`: each form is an "ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter
+- `file`: each of the three programs (`nicer_fast`, `nicer_fast_strict`, `nicer_fast_no_openmp`) is an "ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter
   /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=..., for GNU/Linux 3.2.0, ..., not stripped": a 64-bit Linux program for
   Intel/AMD processors that loads shared libraries at start. For `nicer_fast` the line also says "with debug_info", for
   `nicer_fast_strict` it does not; neither is built with `-g`, and the difference was not traced further.
@@ -133,7 +142,7 @@ which the detector does see); it orders nothing that the barrier did not already
 the OpenMP library itself was reported, so `make race` leaves nothing out of the detector's watch (its option
 `ignore_noninstrumented_modules` is not used). That the checks can fail was shown once, in a copy that is not kept: with one
 working buffer shared by every thread, 49 of the sixty stars differed from their values alone on 8 threads (none on one
-thread; a second run, by the reviewer, found 55: the count varies from run to run, as a race's does), and the race detector
+thread; a second run found 55: the count varies from run to run, as a race's does), and the race detector
 stopped at the first shared write, in `spot_counts`. `make race` runs one batch in one process; a second batch in the same
 process (as a Python sampler would ask) is not run under the detector.
 

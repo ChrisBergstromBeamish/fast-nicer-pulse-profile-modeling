@@ -5,7 +5,8 @@
 #    24 energies) and (8, 12, 16): five repeats per thread count; stars per second, the fastest and the median of the five, the
 #    speed-up over one thread and that speed-up divided by the number of threads.
 # 2. The batch mode on one thread against the program's own one-at-a-time timing (a negative number of repeats): the same 2,800
-#    stars (the 7 blocks of 400 that mode works out, written to a file by the awk below), time per star.
+#    stars (the 7 blocks of 400 that mode works out, written to a file by the awk below), time per star; then, in five rounds,
+#    the two with the same statistic (the fastest of the same 7 blocks of 400) one right after the other.
 # 3. What limits the speed-up: one thread held on each processor in turn, and four threads held on processors 0 to 3 and then 4
 #    to 7 (taskset), at (10, 16, 24), on the first 1,024 of the 4,096 stars.
 # 4. The same question without threads: 4 and then 8 separate programs at the same moment, each on one thread held on its own
@@ -59,6 +60,16 @@ for s in "10 16 24" "8 12 16"; do
   for r in $(seq $REPEATS); do
     echo "  ($s) one at a time: $(./nicer_fast tables.bin $s -400 1.4 12 1.0 0.5000000000000001 0.0 1.2217304763960306 0.75 6.7 | grep 'time per' | cut -d';' -f1); $(state)"
   done
+  # The same statistic for both, at nearly the same moment: in each round, the one-at-a-time timing (the fastest of its 7
+  # blocks of 400), then the batch on one thread on each of the same 7 blocks of 400, the fastest of them.
+  awk '{print > ("stars_one_at_a_time_block" int((NR - 1) / 400) ".txt")}' stars_one_at_a_time.txt
+  for r in $(seq $REPEATS); do
+    one=$(./nicer_fast tables.bin $s -400 1.4 12 1.0 0.5000000000000001 0.0 1.2217304763960306 0.75 6.7 | sed -n 's/.*each time: \([0-9.]*\) ms.*/\1/p')
+    bat=$(for k in 0 1 2 3 4 5 6; do ./nicer_fast tables.bin batch $s 1 stars_one_at_a_time_block$k.txt 2>&1 >/dev/null | sed -n 's/.* \([0-9.]*\) stars per second$/\1/p'; done |
+          sort -g | tail -n 1 | awk '{printf "%.4f", 1000 / $1}')
+    echo "  ($s) round $r, the fastest of the same 7 blocks of 400: one at a time $one ms, batch on one thread $bat ms, batch minus one at a time $(awk -v a=$bat -v b=$one 'BEGIN {printf "%+.1f%%", 100 * (a - b) / b}') ; $(state)"
+  done
+  rm -f stars_one_at_a_time_block*.txt
 done
 power
 fi

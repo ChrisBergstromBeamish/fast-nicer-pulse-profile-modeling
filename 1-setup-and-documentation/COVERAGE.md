@@ -106,8 +106,9 @@ each star comes out exactly as it does alone. One star is still worked out on on
 "In parallel" here means only this: the batch mode of `nicer_fast` and `nicer_fast_strict`, and the library
 `libnicer_fast.so`, work out many stars at once, one star per thread at any moment (threads are lines of work of one
 program, each on a core; OpenMP, a feature of the compiler, hands the stars to them). For every star, ln L, the code and
-every bin count come out the same, bit for bit, as when that star is worked out alone, on any number of threads and in any
-order of the stars (`3-compiled-solution/check.py`; `3-compiled-solution/README.md`). It does not cover: parallel work inside
+every bin count come out the same, bit for bit, as when that star is worked out alone, in every case checked: 108 stars on 1,
+2, 3, 4 and 8 threads, in their order and in one shuffled order (`3-compiled-solution/check.py`; `CLAIMS.md`, row J1).
+Other numbers of threads and other orders are not checked. It does not cover: parallel work inside
 one star (the rings of one spot are worked out one after another); several stars inside one thread with the processor's
 vector instructions; the Python solution, which works on one star at a time on one core; a graphics card; a build for
 the Windows side (the compiled solution is built and run on the Linux side); and machines other than the one laptop on
