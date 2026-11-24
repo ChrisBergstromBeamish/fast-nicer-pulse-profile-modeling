@@ -33,10 +33,10 @@ One processor core of a laptop (Intel Core Ultra 7 258V), unless a line says oth
   measured on 22 November 2026. A repeat on 23 November with the laptop on battery power gave 5.1 and 1.0 thousandths of
   a second with the same numbers out; on mains power again that day, 2.9 and 0.40. All are in the claims table.
 - Many stars at once, on all eight processors of the same laptop (sprint 2): on eight threads (lines of work of one
-  program, each on a processor core) the compiled program worked out 1,711 stars per second at the working setting
-  (10 rings per panel, 16 points, 24 energies; median 1,641), 4.7 times its 363 per second on one thread, on batches of
-  4,096 different stars drawn from the public example's prior, fastest of five repeats, on mains power on 23 November
-  2026 (`CLAIMS.md`, row I1). In the checks, each of 108 stars came out of batches on 1 to 8 threads the same, bit for
+  program, each on a processor core) the compiled program worked out 2,096 stars per second at the working setting
+  (10 rings per panel, 16 points, 24 energies; median 2,086), 5.2 times its 406 per second on one thread, on batches of
+  4,096 different stars drawn from the public example's prior, fastest of five repeats, on mains power with nothing else
+  running on 24 November 2026 (`CLAIMS.md`, row I1). In the checks, each of 108 stars came out of batches on 1 to 8 threads the same, bit for
   bit, as when it is worked out alone (row J1). No ratio against X-PSI is stated for several cores: X-PSI's time on several threads is
   not measured.
 - The public code X-PSI itself (version 3.5.0b1), installed in its own folder on the same laptop and run there on
