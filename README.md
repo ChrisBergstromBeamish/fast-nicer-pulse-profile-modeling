@@ -15,6 +15,9 @@ here only as the instrument whose kind of data this calculation serves.
 - **The NASA project:** NICER, the Neutron star Interior Composition Explorer: https://heasarc.gsfc.nasa.gov/docs/nicer/
 - **The control:** X-PSI, the public code for this calculation: https://github.com/xpsi-group/xpsi (version 3.5.0b1,
   installed and run on the same laptop).
+  - **X-PSI's results on this test**, as the comparison printed them on 23 November 2026 (at its shipped settings: its
+    value at the example's star, its accuracy over the 12 stars and its time):
+    https://github.com/ChrisBergstromBeamish/fast-nicer-pulse-profile-modeling/blob/main/1-setup-and-documentation/measured-2026-11-23/compare_with_public_code_2026-11-23_mains.txt#L5-L10
 - **Speed:** compiled, ours is **116 to 131 times faster** than X-PSI at X-PSI's shipped settings, on one processor core
   of the same laptop, on mains power. At our coarser setting it is 163 to 184 times faster. In Python it is 17 times faster.
 - **Accuracy:** at its shipped settings X-PSI's likelihood is up to **0.455** from the converged value. Ours is up to
