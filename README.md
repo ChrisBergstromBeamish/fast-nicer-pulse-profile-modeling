@@ -22,8 +22,10 @@ here only as the instrument whose kind of data this calculation serves.
   converged value is ours at a fine setting, which X-PSI's counts approach as its settings are refined (`CLAIMS.md`, rows
   H7 and H8).
 - **At X-PSI's accuracy:** our coarser setting is still about six times more accurate than X-PSI's shipped settings
-  (0.072 against 0.455), and it is 163 to 184 times faster. Set exactly to X-PSI's accuracy it would be faster still; that
-  has not been measured.
+  (0.072 against 0.455), and it is 163 to 184 times faster. Set exactly to X-PSI's accuracy, we estimate that ours would
+  be **about 190 to 220 times faster**. This is only an estimate, not a measurement: it extends our two measured settings
+  (how their error and their time change), and about 0.22 thousandths of a second of each working-out does not get
+  shorter at coarser settings, so the gain levels off near 250 times.
 - **Where the speed comes from:**
   1. **A derivation from conservation of mass-energy** (`DERIVATION.md`, 3.1). Counting the photons where they are
      emitted makes the light-bending factor cancel exactly. So no direction has to be found by inverting the light's path,
