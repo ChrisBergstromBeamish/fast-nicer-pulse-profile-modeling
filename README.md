@@ -10,6 +10,38 @@ public code for this problem, on X-PSI's own shipped example. The only data used
 NASA, the NICER team and the authors of the public codes have not asked for, reviewed or endorsed this work. NICER is named
 here only as the instrument whose kind of data this calculation serves.
 
+## In short
+
+- **The NASA project:** NICER, the Neutron star Interior Composition Explorer: https://heasarc.gsfc.nasa.gov/docs/nicer/
+- **The control:** X-PSI, the public code for this calculation: https://github.com/xpsi-group/xpsi (version 3.5.0b1,
+  installed and run on the same laptop).
+- **Speed:** compiled, ours is **116 to 131 times faster** than X-PSI at X-PSI's shipped settings, on one processor core
+  of the same laptop, on mains power. At our coarser setting it is 163 to 184 times faster. In Python it is 17 times faster.
+- **Accuracy:** at its shipped settings X-PSI's likelihood is up to **0.455** from the converged value. Ours is up to
+  **0.011** from it, about **41 times closer**. Both are measured over 12 stars near X-PSI's own example, in ln L; the
+  converged value is ours at a fine setting, which X-PSI's counts approach as its settings are refined (`CLAIMS.md`, rows
+  H7 and H8).
+- **At X-PSI's accuracy:** our coarser setting is still about six times more accurate than X-PSI's shipped settings
+  (0.072 against 0.455), and it is 163 to 184 times faster. Set exactly to X-PSI's accuracy it would be faster still; that
+  has not been measured.
+- **Where the speed comes from:**
+  1. **A derivation from conservation of mass-energy** (`DERIVATION.md`, 3.1). Counting the photons where they are
+     emitted makes the light-bending factor cancel exactly. So no direction has to be found by inverting the light's path,
+     no lensing derivative is computed, and one table of light bending serves every star.
+  2. **Exact phase bins** (`DERIVATION.md`, 3.3). A whole stretch of the spot goes into each arrival bin exactly, so no
+     fine rotation mesh is needed. Estimate from the counts: about 4 times fewer evaluations (16 points per ring
+     against X-PSI's 64 rotation steps).
+  3. **Sampling where it counts.** We use 10 rings per panel, 16 points and 24 energies, placed where the counts change.
+     X-PSI uses 32 cells, 64 rotation steps, 512 rays and 64 energies. Estimate from the counts: about 2.7 times fewer
+     evaluations from the energies alone.
+  4. **Compiled code.** The same steps are written out in C. Measured: 7 times faster than our own Python (2.94 to 0.42
+     thousandths of a second).
+
+  Items 1 to 3 together give the measured 17 times of the Python version against X-PSI's compiled code. They have not been
+  timed one by one, so the figures for items 2 and 3 are estimates from the counts of evaluations. For many stars at
+  once, all eight processor cores of the laptop give 5.2 times more stars per second (measured; X-PSI was not timed on
+  several cores).
+
 ## The three folders
 
 1. `1-setup-and-documentation/`: how to set the repository up (`README.md`), what the programs compute and from what
